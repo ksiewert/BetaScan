@@ -22,11 +22,11 @@ Beta Scan takes in a tab separated file with two columns. The first column conta
 245	.99  
 
 ### Parameters 
-⋅⋅* -i: Path of input file
-⋅⋅* -n: Sample size
-⋅⋅* -w: Window size (default: 1000)
-⋅⋅* -p: Value of p (default: 20)
-⋅⋅* -f: Use folded version (default: false)
+* -i: Path of input file
+* -n: Sample size
+* -w: Window size (default: 1000)
+* -p: Value of p (default: 20)
+* -f: Use folded version (default: false)
 
 ### Sample Run
 To run Beta Scan on our file SNPFreqs.txt with default parameters:
