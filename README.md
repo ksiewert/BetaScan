@@ -14,19 +14,19 @@ To use it, an installation of python 2 (https://www.python.org/downloads/) is re
 ### Input File Format
 Beta Scan takes in a tab separated file with two columns. The first column contains the coordinate of each variant, and the second contains the frequency, between 0 and 1, exclusive, of the variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0 or 1 will be ignored. The scan should be run on each chromosome separately. An example of a sample file is below:
 
-1	.2
-25	.01
-47	.16
-48	.84
-103	.10
-245	.99
+1	.2  
+25	.01  
+47	.16  
+48	.84  
+103	.10  
+245	.99  
 
 ### Parameters 
--i: Path of input file
--n: Sample size
--w: Window size (default: 1000)
--p: Value of p (default: 20)
--f: Use folded version (default: false)
+⋅⋅* -i: Path of input file
+⋅⋅* -n: Sample size
+⋅⋅* -w: Window size (default: 1000)
+⋅⋅* -p: Value of p (default: 20)
+⋅⋅* -f: Use folded version (default: false)
 
 ### Sample Run
 To run Beta Scan on our file SNPFreqs.txt with default parameters:
@@ -35,7 +35,7 @@ python BScan.py -i SNPFreqs.txt -n 100
 ```
 To run with a 2000 basepair window, a p parameter value of 50 and using the folded version of Beta:
 ```
-	python BScan.py -i SNPFreqs.txt -n 100 -w 2000 -p 50 -f
+python BScan.py -i SNPFreqs.txt -n 100 -w 2000 -p 50 -f
 ```
 
 ### Output Format
