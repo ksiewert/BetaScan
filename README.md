@@ -46,14 +46,17 @@ Caution: if variant calls within the specified window size of the core variant a
 
 ## FAQ
 1. How many samples are needed to run Beta?
+
 We have found that in human, a relatively low number of samples, around 5, are sufficient to detect a fairly large proportion of sites. Maximum power is obtained with a sample size of around 20 (so 10 diploid individuals).
 
 2. How do I choose a value of p?
+
 Although there is no definite best choice of p, and results are fairly robust to choice, we do have some guidelines:
 If frequency calls can be called confidently, a value around 20 is sufficient
 If frequency calls are not confident, a smaller value of p should be used. 
 
 3. What window size should I use?
+
 See the supplement of Siewert & Voight, 2017 for a rough derivation of maximum window size, based on the estimated recombination rate.
 
 
