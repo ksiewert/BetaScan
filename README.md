@@ -42,7 +42,8 @@ python BScan.py -i SNPFreqs.txt -n 100 -w 2000 -p 50 -f
 
 ### Output Format
 Beta Scan outputs a 2-column tab delimited file, where the first column contains the coordinate of the core variant, and the second column contains its Beta score.
-Caution: if variant calls within the specified window size of the core variant are not confident, the value of Beta may not be correct, because of artificially elevated or reduced number of mutations. For this reason, we encourage you to use quality filters.
+
+*Caution: if variant calls within the specified window size of the core variant are not confident, the value of Beta may not be correct, because of artificially elevated or reduced number of mutations. For this reason, we encourage you to use quality filters.*
 
 ## FAQ
 1. How many samples are needed to run Beta?
