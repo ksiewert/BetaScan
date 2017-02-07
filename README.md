@@ -1,5 +1,5 @@
 # BetaScan
-Beta scan implements the Beta statistic from Siewert and Voight, 2017 to detect ancient balancing selection. It takes in a file of variant positions and frequencies, and calculates Beta in a sliding window approach. It allows the user to choose appropriate parameter choices, and outputs the value of Beta for each variant.
+Beta scan implements the Beta statistic to detect ancient balancing selection. It takes in a file of variant positions and frequencies, and calculates Beta in a sliding window approach. It allows the user to choose appropriate parameter choices, and outputs the value of Beta for each variant.
 
 Any feedback or questions are very welcome. You can e-mail Katie Siewert at ksiewert@upenn.edu. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
 
@@ -58,6 +58,6 @@ If frequency calls are not confident, a smaller value of p should be used.
 
 3. What window size should I use?
 
-See the supplement of Siewert & Voight, 2017 for a rough derivation of maximum window size, based on the estimated recombination rate.
+See the supplement of the future Siewert & Voight, 2017 for a rough derivation of maximum window size, based on the estimated recombination rate.
 
 
