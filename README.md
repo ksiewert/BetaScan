@@ -13,7 +13,7 @@ Beta scan is a command line program implemented in python.
 ## Basic Usage
 
 ### Input File Format
-Beta Scan takes in a tab separated file with two columns. The first column contains the coordinate of each variant, and the second contains the frequency, between 0 and 1, exclusive, of the variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0 or 1 will be ignored. The scan should be run on each chromosome separately. An example of a sample file is below:
+Beta Scan takes in a tab separated file with two columns. The first column contains the coordinate of each variant, and the second contains the frequency, between 0 and 1, exclusive, of the variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0 or 1 should not be included. The scan should be run on each chromosome separately. An example of a sample file is below:
 
 ```
 1	.2  
