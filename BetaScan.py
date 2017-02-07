@@ -4,8 +4,6 @@ from StringIO import StringIO
 import argparse
 import math
 import os
-import pdb
-
 
 
 def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
