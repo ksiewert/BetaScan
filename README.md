@@ -3,7 +3,7 @@ Beta scan implements the Beta statistic to detect ancient balancing selection. I
 
 Any feedback or questions are very welcome. You can e-mail Katie Siewert at ksiewert@upenn.edu. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
 
-Caution: This program is in its early stages. Use with caution!
+Caution: This program is in its early stages. I will continue to test it and make changes throughout the upcoming weeks.
 
 ## Getting Started
 Beta scan is a command line program implemented in python.
