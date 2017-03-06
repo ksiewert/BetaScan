@@ -4,7 +4,7 @@ from StringIO import StringIO
 import argparse
 import math
 import os
-
+import pdb
 
 def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	"""Takes in the previous indices of the starting and end of the window,
@@ -84,6 +84,7 @@ def calc_beta_unfolded(SNPFreqList, coreFreq, numInd,p):
 		a1 += 1./i
 
 	thetaW = len(SNPFreqList)/a1
+	pdb.set_trace()
 	thetaBNum = sum(fun(SNPFreqList,coreFreq,p,numInd))
 	thetaBDenom = 0
 	for i in range(1,numInd):
@@ -116,9 +117,9 @@ def main():
 	#Loads the input parameters given by the user
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", help="Name of input file with all SNPs",type=str)
-	parser.add_argument("-w", help="Maximum Window Size (in bp) to calculate Beta in for a single test SNP",type=int)
+	parser.add_argument("-w", help="Maximum Window Size (in bp) to calculate Beta in for a single test SNP",type=int,default=1000)
 	parser.add_argument("-n", help="Number of Individuals in data set",type=int)
-	parser.add_argument("-p", help="Power to raise different measure by",type=int)
+	parser.add_argument("-p", help="Power to raise different measure by",type=int,default=20)
 	parser.add_argument("-fold", help="Use folded SFS version",action="store_true")
 	args = parser.parse_args()
 
