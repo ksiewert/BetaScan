@@ -49,9 +49,9 @@ To run with a 2000 basepair window, a p parameter value of 50 and using the fold
 ```
 python BScan.py -i SNPFreqs.txt -n 100 -w 2000 -p 50 -f
 ```
-To run with a 5000 basepair window, a p parameter value of 20 and excuding all core SNPs that are of frequency 10% or less:
+To run with a 5000 basepair window, a p parameter value of 20 and excuding all core SNPs that are of frequency 10% or less, or of frequency 90% or greater:
 ```
-python BScan.py -i SNPFreqs.txt -n 100 -w 5000 -p 50 -m .1
+python BScan.py -i SNPFreqs.txt -n 100 -w 5000 -p 20 -m .1
 ```
 
 ### Output Format
