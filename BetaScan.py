@@ -119,18 +119,22 @@ def main():
 	parser.add_argument("-w", help="Maximum Window Size (in bp) to calculate Beta in for a single test SNP",type=int,default=1000)
 	parser.add_argument("-p", help="Power to raise different measure by",type=int,default=20)
 	parser.add_argument("-fold", help="Use folded SFS version",action="store_true")
+	parser.add_argument("-m", help="Minimum folded core SNP frequency, exclusive",type=float,default=0)
+
 	args = parser.parse_args()
 
 
 	output = open("Betas_"+args.i.split("/")[-1],'w')
-
-	SNPs = np.loadtxt(open(args.i,'r'),dtype=float)
+	try:
+		SNPs = np.loadtxt(open(args.i,'r'),dtype=float)
+	except:
+		print sys.exit("Error: Input file in wrong format")
 	prevStarti = 0
 	prevEndi = 0
 	for SNPi in range(len(SNPs)):
 		loc = int(SNPs[SNPi,0])
 		freq = float(SNPs[SNPi,1])
-		if freq<1.0 and freq>0:
+		if freq<1.0-args.m and freq>args.m:
 			core_loc = SNPs[SNPi,0]
 			SNPLocs = SNPs[:,0]
 
@@ -144,6 +148,9 @@ def main():
 					B = calc_beta_unfolded(SNPSet[:,1],SNPs[SNPi,1],args.n,args.p)
 
 			output.write(str(loc)+"\t"+str(B)+"\n")
+		elif freq>1.0 or freq<0:
+			print sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+". Frequencies should be between 0 and 1.")
+
 
 
 
