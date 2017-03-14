@@ -10,7 +10,7 @@ Beta scan is a command line program implemented in python.
 
 ### Prerequisites 
 * [Python 2](https://www.python.org/downloads/) -Language code is written in
-* [Numpy] (http://www.numpy.org/) -Python package used for arrays
+* [Numpy](http://www.numpy.org/) -Python package used for arrays
 
 ## Basic Usage
 
