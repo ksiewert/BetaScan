@@ -30,8 +30,8 @@ Beta Scan takes in a tab separated file with two columns. The first column conta
 * -n: Sample size
 * -w: Window size (default: 1000)
 * -p: Value of p (default: 20)
-* -fold: Use folded version (default: false)
 * -m: Minimum folded frequency of core SNP, exclusive (default: 0)
+* -fold: Use folded version (default: false)
 
 ### Explanation of parameters
 * -m: In theory, Beta has good performance down to very low and high frequencies. However, the chance of seeing an allele at very low or high equilibrium frequency that is under long-term balancing selection is very low. This is because genetic drift is expected to drift the allele out of the population (see Ewens & Thomson 1970 or Carr & Nassar 1970). We see this phenomena for variants at folded frequency ~15% or less when we simulate overdominance with human parameters. In addition, poor variant calling can cause false variant calls at low allele frequencies. 
@@ -47,7 +47,7 @@ python BScan.py -i SNPFreqs.txt -n 100
 ```
 To run with a 2000 basepair window, a p parameter value of 50 and using the folded version of Beta:
 ```
-python BScan.py -i SNPFreqs.txt -n 100 -w 2000 -p 50 -f
+python BScan.py -i SNPFreqs.txt -n 100 -w 2000 -p 50 -fold
 ```
 To run with a 5000 basepair window, a p parameter value of 20 and excuding all core SNPs that are of frequency 10% or less, or of frequency 90% or greater:
 ```
