@@ -30,7 +30,7 @@ Beta Scan takes in a tab separated file with two columns. The first column conta
 * -n: Sample size
 * -w: Window size (default: 1000)
 * -p: Value of p (default: 20)
-* -f: Use folded version (default: false)
+* -fold: Use folded version (default: false)
 * -m: Minimum folded frequency of core SNP, exclusive (default: 0)
 
 ### Explanation of parameters
