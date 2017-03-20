@@ -17,16 +17,10 @@ def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	"""
 
 	locSNP = dataList[SNPi,0] #the coordinates of the core SNP
-
-	firstI = prevStarti
-	while dataList[firstI,0]<locSNP-winSize/2:
-		firstI += 1
-
-	endI = prevEndi
-	while endI + 1<len(dataList[:,0]) and dataList[endI+1,0]<locSNP + winSize/2:
-		endI +=1
-
-
+	winStart = locSNP-winSize/2
+	firstI= np.searchsorted(dataList[prevStarti:,0],winStart,side='left') #coordinate of start of window, inclusive
+	winEnd = locSNP + winSize/2
+	endI = np.searchsorted(dataList[prevEndi:,0],winEnd,side='left') #coordinate of end of window, exclusive
  	return  (firstI,endI)
 
 
@@ -89,7 +83,6 @@ def calc_beta_unfolded(SNPFreqList, coreFreq, numInd,p):
 		thetaBDenom += (calcDf_unfold(float(i)/numInd,coreFreq,p,numInd))/float(i)
 
 	thetaB = thetaBNum/thetaBDenom
-	
 	return thetaB - thetaW
 
 
@@ -127,6 +120,8 @@ def main():
 	output = open("Betas_"+args.i.split("/")[-1],'w')
 	try:
 		SNPs = np.loadtxt(open(args.i,'r'),dtype=float)
+	except IOError:
+		print sys.exit("Error: Input file cannot be found")
 	except:
 		print sys.exit("Error: Input file in wrong format")
 	prevStarti = 0
@@ -141,7 +136,7 @@ def main():
 			sI,endI = find_win_indx(prevStarti, prevEndi, SNPi, SNPs, args.w)
 			B = 0
 			if endI>sI:
-				SNPSet = np.take(SNPs,range(sI,SNPi)+range(SNPi+1,endI+1),axis=0)
+				SNPSet = np.take(SNPs,range(sI,SNPi)+range(SNPi+1,endI),axis=0)
 				if args.fold:
 					B = calc_beta_folded(SNPSet[:,1],SNPs[SNPi,1],args.n,args.p)
 				else:
