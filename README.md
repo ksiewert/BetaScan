@@ -41,7 +41,7 @@ Beta Scan takes in a tab separated file with two columns. The first column conta
 * -fold: The default version of Beta takes into account the frequency of each variant. However, if ancestral state cannot be confidently called, perhaps due to there being no suitable outgroup, the folded version of Beta should be used. The formulation for this statistic can be found in the supplement of our paper.
 
 ### Sample Commands
-To run Beta Scan on our file SNPFreqs.txt with default parameters:
+To run Beta Scan on our file SNPFreqs.txt with default parameters and 50 diploid individuals:
 ```
 python BScan.py -i SNPFreqs.txt -n 100
 ```
