@@ -93,6 +93,7 @@ def calcDf_unfold(SNPFreq,x,p,numInd):
 		#x: freq of coresite, ranges from 0 to 1
 		#p: the p parameter specificying sharpness of peak
 	"""
+
 	x = min(x,1.-x)
 	f = min(SNPFreq,1.-SNPFreq)
 	maxdiff = max(x,.5-x)
@@ -102,13 +103,12 @@ def calcDf_unfold(SNPFreq,x,p,numInd):
 
 
 
-
 def main():
 	
 	#Loads the input parameters given by the user
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", help="Name of input file with all SNPs",type=str,required=True)
-	parser.add_argument("-n", help="Number of chromosomes in data set: 2n for diploids, where n is the number of individuals",type=int,required=True)
+	#parser.add_argument("-n", help="Number of chromosomes in data set: 2n for diploids, where n is the number of individuals",type=int,default=0)
 	parser.add_argument("-w", help="Maximum Window Size (in bp) to calculate Beta in for a single test SNP",type=int,default=1000)
 	parser.add_argument("-p", help="Power to raise different measure by",type=int,default=20)
 	parser.add_argument("-fold", help="Use folded SFS version",action="store_true")
@@ -128,7 +128,9 @@ def main():
 	prevEndi = 0
 	for SNPi in range(len(SNPs)):
 		loc = int(SNPs[SNPi,0])
-		freq = float(SNPs[SNPi,1])
+		freqCount = float(SNPs[SNPi,1])
+		sampleN = int(SNPs[SNPi,2])
+		freq = freqCount/sampleN
 		if freq<1.0-args.m and freq>args.m:
 			core_loc = SNPs[SNPi,0]
 			SNPLocs = SNPs[:,0]
@@ -137,10 +139,11 @@ def main():
 			B = 0
 			if endI>sI:
 				SNPSet = np.take(SNPs,range(sI,SNPi)+range(SNPi+1,endI),axis=0)
+				SNPSet = SNPSet[:,1]/SNPSet[:,2]
 				if args.fold:
-					B = calc_beta_folded(SNPSet[:,1],SNPs[SNPi,1],args.n,args.p)
+					B = calc_beta_folded(SNPSet,freqCount/sampleN,sampleN,args.p)
 				else:
-					B = calc_beta_unfolded(SNPSet[:,1],SNPs[SNPi,1],args.n,args.p)
+					B = calc_beta_unfolded(SNPSet,freqCount/sampleN,sampleN,args.p)
 
 			output.write(str(loc)+"\t"+str(B)+"\n")
 		elif freq>1.0 or freq<0:
