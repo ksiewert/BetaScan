@@ -4,6 +4,7 @@ from StringIO import StringIO
 import argparse
 import math
 import os
+import pdb
 
 def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	"""Takes in the previous indices of the starting and end of the window,
@@ -83,6 +84,7 @@ def calc_beta_unfolded(SNPFreqList, coreFreq, numInd,p):
 		thetaBDenom += (calcDf_unfold(float(i)/numInd,coreFreq,p,numInd))/float(i)
 
 	thetaB = thetaBNum/thetaBDenom
+	#pdb.set_trace()
 	return thetaB - thetaW
 
 
@@ -98,6 +100,8 @@ def calcDf_unfold(SNPFreq,x,p,numInd):
 	f = min(SNPFreq,1.-SNPFreq)
 	maxdiff = max(x,.5-x)
 	corr = (SNPFreq*numInd)*(((maxdiff-abs(x-f))/maxdiff)**p)
+	if x-.494949<.001:
+		pdb.set_trace()
 	return corr 
 
 
@@ -108,7 +112,6 @@ def main():
 	#Loads the input parameters given by the user
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", help="Name of input file with all SNPs",type=str,required=True)
-	#parser.add_argument("-n", help="Number of chromosomes in data set: 2n for diploids, where n is the number of individuals",type=int,default=0)
 	parser.add_argument("-w", help="Maximum Window Size (in bp) to calculate Beta in for a single test SNP",type=int,default=1000)
 	parser.add_argument("-p", help="Power to raise different measure by",type=int,default=20)
 	parser.add_argument("-fold", help="Use folded SFS version",action="store_true")
@@ -147,7 +150,7 @@ def main():
 
 			output.write(str(loc)+"\t"+str(B)+"\n")
 		elif freq>1.0 or freq<0:
-			print sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+". Frequencies should be between 0 and 1.")
+			print sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+".")
 
 
 
