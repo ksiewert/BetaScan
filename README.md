@@ -21,7 +21,7 @@ Beta scan is a command line program implemented in python.
 Beta Scan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency, in number of individuals, of the variant. The third column contains the sample size that was used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0 or 1 should not be included. The scan should be run on each chromosome separately. An example of a sample file is below:
 
 ```
-4 2 99  
+14 2 99  
 25  1 100  
 47  99  100
 48  82  95
