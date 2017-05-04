@@ -5,6 +5,9 @@ Any feedback or questions are very welcome. You can e-mail Katie Siewert at ksie
 
 Caution: This program is in its early stages. I will continue to test it and make changes throughout the upcoming weeks.
 
+# Recent Updates
+5/4/17: Beta now can take in variable sample sizes for each SNP. In other words, not all frequencies have to be calculated using the same number of individuals. Because of this, the input file format has been updated.
+
 ## Getting Started
 Beta scan is a command line program implemented in python.
 
@@ -15,19 +18,18 @@ Beta scan is a command line program implemented in python.
 ## Basic Usage
 
 ### Input File Format
-Beta Scan takes in a tab separated file with two columns. The first column contains the coordinate of each variant, and the second contains the frequency, between 0 and 1, exclusive, of the variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0 or 1 should not be included. The scan should be run on each chromosome separately. An example of a sample file is below:
+Beta Scan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency, in number of individuals, of the variant. The third column contains the sample size that was used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0 or 1 should not be included. The scan should be run on each chromosome separately. An example of a sample file is below:
 
 ```
-4	.2  
-25	.01  
-47	.16  
-48	.84  
-103	.10  
-245	.99  
+4	2 99  
+25	1 100  
+47	99  100
+48	82  95
+103	10  100
+245	93  96
 ```
 ### Parameters 
 * -i: Path of input file
-* -n: Sample size
 * -w: Window size (default: 1000)
 * -p: Value of p (default: 20)
 * -m: Minimum folded frequency of core SNP, exclusive, can range from 0 to .5 (default: 0)
@@ -41,17 +43,17 @@ Beta Scan takes in a tab separated file with two columns. The first column conta
 * -fold: The default version of Beta takes into account the frequency of each variant. However, if ancestral state cannot be confidently called, perhaps due to there being no suitable outgroup, the folded version of Beta should be used. The formulation for this statistic can be found in the supplement of our paper.
 
 ### Sample Commands
-To run Beta Scan on our file SNPFreqs.txt with default parameters and 50 diploid individuals:
+To run Beta Scan on our file SNPFreqs.txt with default parameters:
 ```
-python BScan.py -i SNPFreqs.txt -n 100
+python BScan.py -i SNPFreqs.txt
 ```
 To run with a 2000 basepair window, a p parameter value of 50 and using the folded version of Beta:
 ```
-python BScan.py -i SNPFreqs.txt -n 100 -w 2000 -p 50 -fold
+python BScan.py -i SNPFreqs.txt -w 2000 -p 50 -fold
 ```
 To run with a 5000 basepair window, a p parameter value of 20 and excuding all core SNPs that are of frequency 10% or less, or of frequency 90% or greater:
 ```
-python BScan.py -i SNPFreqs.txt -n 100 -w 5000 -p 20 -m .1
+python BScan.py -i SNPFreqs.txt -w 5000 -p 20 -m .1
 ```
 
 ### Output Format
