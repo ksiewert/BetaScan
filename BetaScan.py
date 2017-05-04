@@ -4,7 +4,6 @@ from StringIO import StringIO
 import argparse
 import math
 import os
-import pdb
 
 def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	"""Takes in the previous indices of the starting and end of the window,
@@ -26,39 +25,42 @@ def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 
 
 def calc_beta_folded(SNPFreqList, coreFreq, numInd,p):
-	"""Calculates the folded version of Beta from Siewert et al.
-	
-		Parameters:
-		SNPFreqList: a list of frequencies, one for each SNP in the window
-		coreFreq: the frequency of the core SNP, must range from 0 to 1, exclusive
+	"""Calculates the value of d, the similarity measure, times i, the frequency from Siewert et al.
+		#SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
+		#x: freq of coresite, ranges from 0 to 1
+		#p: the p parameter specificying sharpness of peak
 	"""
 	fun = np.vectorize(calcD_fold,otypes=[np.float])
 	a1 = 0.
 	for i in range(1,numInd):
 		a1 += 1./i
 
-	thetaW = len(SNPFreqList)/a1
-	thetaBNum = sum(fun(SNPFreqList,coreFreq,p))
+	thetaW = len(SNPFreqList[:,0])/a1
+	thetaBNum = sum(fun(SNPFreqList[:,0],SNPFreqList[:,1],coreFreq,p))
 
 	thetaBDenom = 0
 	for i in range(1,numInd):
-		thetaBDenom += (1./i)*calcD_fold(float(i)/numInd,coreFreq,p)
+		thetaBDenom += (1./i)*calcD_fold(i,numInd,coreFreq,p)
 
 	thetaB = thetaBNum/thetaBDenom
+
 	return thetaB - thetaW
 
 
 
-def calcD_fold(SNPFreq,x,p):
-	"""Calculates the value of d, the similarity measure, from Siewert et al.
-		#SNPFreq: freq of SNP under consideration, ranges from 0 to 1
+def calcD_fold(SNPFreq,SNPn,x,p):
+	"""Calculates the value of d, the similarity measure, times i, the frequency from Siewert et al.
+		#SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#x: freq of coresite, ranges from 0 to 1
 		#p: the p parameter specificying sharpness of peak
 	"""
+	freq = float(SNPFreq)/SNPn
+
 	x = min(x,1.-x)
-	f = min(SNPFreq,1.-SNPFreq)
+	f = min(freq,1.-freq)
 	maxdiff = max(x,.5-x)
 	corr = (((maxdiff-abs(x-f))/maxdiff)**p)
+
 	return corr 
 
 
@@ -68,7 +70,8 @@ def calc_beta_unfolded(SNPFreqList, coreFreq, numInd,p):
 		For use when the ancestral and derived alleles can be confidently called
 	
 		Parameters:
-		SNPFreqList: a list of frequencies, one for each SNP in the window
+		SNPFreqList: a list of frequencies, one for each SNP in the window,
+			first column ranges from 1 to number of individuals, second columns is # individuals
 		coreFreq: the frequency of the core SNP, must range from 0 to 1, exclusive
 	"""
 	fun = np.vectorize(calcDf_unfold,otypes=[np.float])
@@ -77,31 +80,30 @@ def calc_beta_unfolded(SNPFreqList, coreFreq, numInd,p):
 	for i in range(1,numInd):
 		a1 += 1./i
 
-	thetaW = len(SNPFreqList)/a1
-	thetaBNum = sum(fun(SNPFreqList,coreFreq,p,numInd))
+	thetaW = len(SNPFreqList[:,0])/a1
+
+	thetaBNum = sum(fun(SNPFreqList[:,0],SNPFreqList[:,1],coreFreq,p))
 	thetaBDenom = 0
 	for i in range(1,numInd):
-		thetaBDenom += (calcDf_unfold(float(i)/numInd,coreFreq,p,numInd))/float(i)
+		thetaBDenom += (calcDf_unfold(i,numInd,coreFreq,p))/float(i)
 
 	thetaB = thetaBNum/thetaBDenom
-	#pdb.set_trace()
 	return thetaB - thetaW
 
 
 
-def calcDf_unfold(SNPFreq,x,p,numInd):
+def calcDf_unfold(SNPFreq,SNPn,x,p):
 	"""Calculates the value of d, the similarity measure, times i, the frequency from Siewert et al.
-		#SNPFreq: freq of SNP under consideration, ranges from 0 to 1
+		#SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#x: freq of coresite, ranges from 0 to 1
 		#p: the p parameter specificying sharpness of peak
 	"""
-
+	freq = float(SNPFreq)/SNPn
 	x = min(x,1.-x)
-	f = min(SNPFreq,1.-SNPFreq)
+	f = min(freq,1.-freq)
 	maxdiff = max(x,.5-x)
-	corr = (SNPFreq*numInd)*(((maxdiff-abs(x-f))/maxdiff)**p)
-	if x-.494949<.001:
-		pdb.set_trace()
+	corr = (SNPFreq)*(((maxdiff-abs(x-f))/maxdiff)**p)
+
 	return corr 
 
 
@@ -141,8 +143,7 @@ def main():
 			sI,endI = find_win_indx(prevStarti, prevEndi, SNPi, SNPs, args.w)
 			B = 0
 			if endI>sI:
-				SNPSet = np.take(SNPs,range(sI,SNPi)+range(SNPi+1,endI),axis=0)
-				SNPSet = SNPSet[:,1]/SNPSet[:,2]
+				SNPSet = np.take(SNPs,range(sI,SNPi)+range(SNPi+1,endI),axis=0)[:,1:]
 				if args.fold:
 					B = calc_beta_folded(SNPSet,freqCount/sampleN,sampleN,args.p)
 				else:
