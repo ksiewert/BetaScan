@@ -115,7 +115,7 @@ def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", help="Name of input file with all SNPs",type=str,required=True)
 	parser.add_argument("-w", help="Maximum Window Size (in bp) to calculate Beta in for a single test SNP",type=int,default=1000)
-	parser.add_argument("-p", help="Power to raise different measure by",type=int,default=20)
+	parser.add_argument("-p", help="Power to raise difference measure by",type=int,default=20)
 	parser.add_argument("-fold", help="Use folded SFS version",action="store_true")
 	parser.add_argument("-m", help="Minimum folded core SNP frequency, exclusive",type=float,default=0)
 
