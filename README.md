@@ -74,6 +74,6 @@ If frequency calls are not confident, a smaller value of p should be used.
 
 3. What window size should I use?
 
-See the supplement of the future Siewert & Voight, 2017 for a rough derivation of maximum window size, based on the estimated recombination rate.
+See the supplement of our paper on BioRxiv for a rough derivation of maximum window size, based on the estimated recombination rate.
 
 
