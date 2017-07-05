@@ -1,5 +1,5 @@
 # BetaScan
-Beta scan implements the Beta statistic to detect ancient balancing selection. A copy of the paper describing this statistic and its application is available [here on BioRxiv](http://biorxiv.org/content/early/2017/03/01/112870). Beta scan takes in a file of variant positions and frequencies, and calculates Beta in a sliding window approach. It allows the user to choose appropriate parameter choices, and outputs the value of Beta for each variant.
+Beta scan implements the Beta statistic to detect ancient balancing selection. A copy of the paper describing this statistic and its application is available [here on BioRxiv](http://www.biorxiv.org/content/early/2017/07/05/112870). Beta scan takes in a file of variant positions and frequencies, and calculates Beta in a sliding window approach. It allows the user to choose appropriate parameter choices, and outputs the value of Beta for each variant.
 
 Any feedback or questions are very welcome. You can e-mail Katie Siewert at ksiewert@upenn.edu. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
 
