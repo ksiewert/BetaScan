@@ -4,7 +4,6 @@ from StringIO import StringIO
 import argparse
 import math
 import os
-import pdb
 
 def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	"""Takes in the previous indices of the starting and end of the window,
