@@ -19,7 +19,7 @@ Beta scan is a command line program implemented in python.
 ## Basic Usage
 
 ### Input File Format
-Beta Scan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency, in number of haploid individuals, of the variant. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0 or 1 should not be included. The scan should be run on each chromosome separately. An example of a sample file is below:
+Beta Scan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency of the derived allele, in number of haploid individuals, of the variant. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0 or 1 should not be included. In the case of folded Beta, both the derived or ancestral allele frequency can be used, as the frequency will be folded. The scan should be run on each chromosome separately. An example of a sample file is below:
 
 ```
 14  2 99  
@@ -70,7 +70,7 @@ We have found that in human a relatively low number of samples, around 5, is suf
 2. How do I choose a value of p?
 
 Although there is no definite best choice of p, and results are fairly robust to choice, we do have some guidelines:
-If frequency calls can be called confidently, a value around 20 is sufficient
+If frequency calls can be called confidently, a value around 20 is sufficient.
 If frequency calls are not confident, a smaller value of p (around 2) should be used. 
 
 3. What window size should I use?
