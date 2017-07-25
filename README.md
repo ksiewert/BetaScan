@@ -31,7 +31,7 @@ Beta Scan takes in a tab separated file with three columns. The first column con
 ```
 ### Parameters 
 * -i: Path of input file
-* -w: Window size (default: 1000)
+* -w: Total window size (default: 1000)
 * -p: Value of p (default: 20)
 * -m: Minimum folded frequency of core SNP, exclusive, can range from 0 to .5 (default: 0)
 * -fold: Use folded version (default: false)
@@ -58,7 +58,7 @@ python BScan.py -i SNPFreqs.txt -w 5000 -p 20 -m .1
 ```
 
 ### Output Format
-Beta Scan outputs a 2-column tab delimited file, where the first column contains the coordinate of the core variant, and the second column contains its Beta score.
+Beta Scan outputs a 2-column tab delimited file, where the first column contains the coordinate of the core variant, and the second column contains its Beta score. Only core variants above your minimum folded frequency threshold, specified by -m, will appear in this file.
 
 *Caution: if variant calls within the specified window size of the core variant are not confident, the value of Beta may not be correct, because of artificially elevated or reduced number of mutations. For this reason, we encourage you to use quality filters.*
 
