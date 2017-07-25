@@ -1,11 +1,11 @@
 # BetaScan
-Beta scan implements the Beta statistic to detect ancient balancing selection. A copy of the paper describing this statistic and its application is available [here on BioRxiv](http://www.biorxiv.org/content/early/2017/07/05/112870). BetaScan takes in a file of variant positions and frequencies, and calculates Beta in a sliding window approach. It allows the user to choose appropriate parameter choices, and outputs the value of Beta for each variant.
+Beta scan implements the Beta statistic to detect ancient balancing selection. Our paper describing this statistic and its application is available [here](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using). BetaScan takes in a file of variant positions and frequencies, and calculates Beta in a sliding window approach. It allows the user to choose appropriate parameter choices, and outputs the value of Beta for each variant.
 
 Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@upenn.edu or post a github issue. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
 
 
 # Recent Updates
-7/5/17: Added some more checks for valid parameter choice and input file format. Also, slightly modified behavior of script when determining SNPs in current window, so that core SNP is excluded from window size when the window size is even. This means that the window will now be symmetric around the core SNP, whether an odd or even window size parameter is given. Also, made a tweak so that performance should be slightly quicker than the older version.
+7/5/17: Added some more checks for valid parameter choice and input file format. Also, slightly modified behavior of script when determining SNPs in the current window, so that core SNP is excluded from window size when the window size is even. This means that the window will now be symmetric around the core SNP, whether an odd or even window size parameter is given. Also, made a tweak so that performance should be slightly quicker than the older version.
 
 5/4/17: Beta now can take in variable sample sizes for each SNP. In other words, not all frequencies have to be calculated using the same number of individuals. Because of this, the input file format has been updated.
 
@@ -19,7 +19,7 @@ Beta scan is a command line program implemented in python.
 ## Basic Usage
 
 ### Input File Format
-Beta Scan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency of the derived allele, in number of haploid individuals, of the variant. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0% or 100% should not be included. In practice, for folded Beta, it doesn't matter if the derived, ancestral, or alredy folded allele frequency is used in the second column, as BetaScan will fold the frequency anyway. The scan should be run on each chromosome separately. An example of a sample file is below:
+Beta Scan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency of the derived allele, in number of haploid individuals, of the variant. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0% or 100% should not be included. In practice, for folded Beta, it doesn't matter if the derived, ancestral, or already folded allele frequency is used in the second column, as BetaScan will fold the frequency anyway. The scan should be run on each chromosome separately. An example of a sample file is below:
 
 ```
 14  2 99  
@@ -31,7 +31,7 @@ Beta Scan takes in a tab separated file with three columns. The first column con
 ```
 ### Parameters 
 * -i: Path of input file
-* -w: Total window size (default: 1000)
+* -w: Total window size (default: 1000, corresponding to 500 bp on either side of the center (i.e. core) SNP)
 * -p: Value of p (default: 20)
 * -m: Minimum folded frequency of core SNP, exclusive, can range from 0 to .5 (default: 0)
 * -fold: Use folded version (default: false)
@@ -77,3 +77,6 @@ If frequency calls are not confident, a smaller value of p (around 2) should be 
 
 See the supplement of our paper on BioRxiv for a rough derivation of maximum window size, based on the estimated recombination rate.
 
+4. Should I use the folded or unfolded version of Beta?
+
+If you have accurate ancestral calls, then we recommend you use the unfolded version, because it can detect balanced haplotypes at more extreme frequencies. If you're not confident in the ancestral calls, then the folded version should be used, because it has identical power throughout most of the Site Frequency Spectrum. In practice, it's not a bad idea to do both. First using unfolded Beta for your general scan, and then using the folded version to double check that any intermediate-frequency top unfolded scan hits are not an artifact of ancestral allele misidentification.
