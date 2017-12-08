@@ -21,7 +21,7 @@ Beta scan is a command line program implemented in python.
 ## Basic Usage
 
 ### Input File Format
-Beta Scan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency of the **derived** allele, in number of haploid individuals, of the variant. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0% or 100% should not be included. In practice, for folded Beta, it doesn't matter if the derived, ancestral, or already folded allele frequency is used in the second column, as BetaScan will fold the frequency anyway. The scan should be run on each chromosome separately. An example of a sample file is below:
+Beta Scan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency of the **derived** allele (note: this is opposite of the BALLET software), in number of haploid individuals, of the variant. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0% or 100% should not be included. In practice, for folded Beta, it doesn't matter if the derived, ancestral, or already folded allele frequency is used in the second column, as BetaScan will fold the frequency anyway. The scan should be run on each chromosome separately. An example of a sample file is below:
 
 ```
 14  2 99  
