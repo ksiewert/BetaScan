@@ -48,15 +48,15 @@ BetaScan takes in a tab separated file with three columns. The first column cont
 ### Sample Commands
 To run BetaScan on our file SNPFreqs.txt with default parameters:
 ```
-python BScan.py -i SNPFreqs.txt
+python BetaScan.py -i SNPFreqs.txt
 ```
 To run with a 2000 base pair window, a p parameter value of 50 and using the folded version of Beta:
 ```
-python BScan.py -i SNPFreqs.txt -w 2000 -p 50 -fold
+python BetaScan.py -i SNPFreqs.txt -w 2000 -p 50 -fold
 ```
 To run with a 5000 base pair window, a p parameter value of 20 and excluding all core SNPs that are of frequency 10% or less, or of frequency 90% or greater:
 ```
-python BScan.py -i SNPFreqs.txt -w 5000 -p 20 -m .1
+python BetaScan.py -i SNPFreqs.txt -w 5000 -p 20 -m .1
 ```
 
 ### Output Format
