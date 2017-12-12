@@ -1,5 +1,5 @@
 # BetaScan
-Beta scan implements the Beta statistic to detect ancient balancing selection. Our paper describing this statistic and its application is available [here](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using). BetaScan takes in a file of variant positions and frequencies, and calculates Beta in a sliding window approach. It allows the user to choose appropriate parameter choices, and outputs the value of Beta for each variant.
+BetaScan implements the Beta statistic to detect ancient balancing selection. Our paper describing this statistic and its application is available [here](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using). BetaScan takes in a file of variant positions and frequencies, and calculates Beta in a sliding window approach. It allows the user to choose appropriate parameter choices, and outputs the value of Beta for each variant.
 
 Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@pennmedicine.upenn.edu or post a github issue. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
 
@@ -12,7 +12,7 @@ If you would like the Beta Scores for each population in the 1000 Genomes datase
 5/4/17: Beta now can take in variable sample sizes for each SNP. In other words, not all frequencies have to be calculated using the same number of individuals. Because of this, the input file format has been updated.
 
 ## Getting Started
-Beta scan is a command line program implemented in python.
+BetaScan is a command line program implemented in python.
 
 ### Prerequisites 
 * [Python 2](https://www.python.org/downloads/) -Language code is written in
@@ -21,7 +21,7 @@ Beta scan is a command line program implemented in python.
 ## Basic Usage
 
 ### Input File Format
-Beta Scan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency of the **derived** allele (note: this is opposite of the BALLET software), in number of haploid individuals, of the variant. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0% or 100% should not be included. In practice, for folded Beta, it doesn't matter if the derived, ancestral, or already folded allele frequency is used in the second column, as BetaScan will fold the frequency anyway. The scan should be run on each chromosome separately. An example of a sample file is below:
+BetaScan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency of the **derived** allele (note: this is opposite of the BALLET software), in number of haploid individuals, of the variant. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0% or 100% should not be included. In practice, for folded Beta, it doesn't matter if the derived, ancestral, or already folded allele frequency is used in the second column, as BetaScan will fold the frequency anyway. The scan should be run on each chromosome separately. An example of a sample file is below:
 
 ```
 14  2 99  
@@ -46,7 +46,7 @@ Beta Scan takes in a tab separated file with three columns. The first column con
 * -fold: The default version of Beta takes into account the frequency of each variant. However, if ancestral state cannot be confidently called, perhaps due to there being no suitable outgroup, the folded version of Beta should be used. The formulation for this statistic can be found in the supplement of our paper.
 
 ### Sample Commands
-To run Beta Scan on our file SNPFreqs.txt with default parameters:
+To run BetaScan on our file SNPFreqs.txt with default parameters:
 ```
 python BScan.py -i SNPFreqs.txt
 ```
@@ -60,7 +60,7 @@ python BScan.py -i SNPFreqs.txt -w 5000 -p 20 -m .1
 ```
 
 ### Output Format
-Beta Scan outputs a 2-column tab delimited file, where the first column contains the coordinate of the core variant, and the second column contains its Beta score. Only core variants above your minimum folded frequency threshold, specified by -m, will appear in this file.
+BetaScan outputs a 2-column tab delimited file, where the first column contains the coordinate of the core variant, and the second column contains its Beta score. Only core variants above your minimum folded frequency threshold, specified by -m, will appear in this file.
 
 *Caution: if variant calls within the specified window size of the core variant are not confident, the value of Beta may not be correct, because of artificially elevated or reduced number of mutations. For this reason, we encourage you to use quality filters.*
 
