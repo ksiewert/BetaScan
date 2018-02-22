@@ -86,8 +86,8 @@ If you have accurate ancestral calls, then we recommend you use the unfolded ver
 5. I have frequency information I calculated using the --freq command in vcftools. How do I convert the vcf output format to the BetaScan output format?
 
 You can use the following command in unix:
-'''
+```
 awk -F "\t|:" '(NR>1) && ($6!='0') && ($6!='1') && ($3=='2') {OFS="\t"; print$2,$6*$4,$4}' yourfile.frq
-'''
+```
 
 This command reformats the .frq file and filters out positions that have more than 2 possible alleles, or are at frequency 0 or 100%. Make sure that you use the fold command if you haven't called ancestral/derived alleles. If you have called them, then this awk script assumes that the derived allele is the first allele listed in the .frq file outputted by vcftoos. Also, please double check that this command outputs the right thing from your .frq file! There could always be variations in the .frq format I don't know about.
