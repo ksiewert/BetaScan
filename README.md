@@ -81,7 +81,7 @@ See the supplement of our paper on BioRxiv for a rough derivation of maximum win
 
 4. Should I use the folded or unfolded version of Beta?
 
-If you have accurate ancestral calls, then we recommend you use the unfolded version, because it can detect balanced haplotypes at more extreme frequencies. If you're not confident in the ancestral calls, then the folded version should be used, because it has identical power throughout most of the Site Frequency Spectrum. In practice, it's not a bad idea to do both. First using unfolded Beta for your general scan, and then using the folded version to double check that any intermediate-frequency top unfolded scan hits are not an artifact of ancestral allele misidentification.
+If you have accurate ancestral calls, then we recommend you use the unfolded version, because it can detect balanced haplotypes at more extreme frequencies. If you're not confident in the ancestral calls, then the folded version should be used, because it has identical power throughout most of the site frequency spectrum. In practice, it's not a bad idea to do both. First using unfolded Beta for your general scan, and then using the folded version to double check that any intermediate-frequency top unfolded scan hits are not an artifact of ancestral allele misidentification.
 
 5. I have frequency information I calculated using the --freq command in vcftools. How do I convert the vcf output format to the BetaScan output format?
 
@@ -96,8 +96,8 @@ This command reformats the .frq file and filters out positions that have more th
 
 Once again, awk can come to the aid:
 
-'''
+```
 awk '{OFS="\t"}{if ($1=="Genomes:") exit }(($2=="m3") || ($2=="m1")) && ($8!="100") {print $3,$8,"100"}' SLiMFile.out
-'''
+```
 
 The first thing to note is that SLiM has more than one output file format, and this awk command only works with the SLiM format, not the ms format. Note, in this example, there's two mutation types simulated: m1 and m3, and both are outputted. You should obviously modify this so it works with your simulation details. This script also assumes a sample size of 100. If this is not our sample size, you obviously should change it to whatever it is.
