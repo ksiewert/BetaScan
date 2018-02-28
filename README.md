@@ -21,7 +21,7 @@ BetaScan is a command line program implemented in python.
 ## Basic Usage
 
 ### Input File Format
-BetaScan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency of the **derived** allele (note: this is opposite of the BALLET software), in number of haploid individuals, of the variant. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0% or 100% should not be included. In practice, for folded Beta, it doesn't matter if the derived, ancestral, or already folded allele frequency is used in the second column, as BetaScan will fold the frequency anyway. The scan should be run on each chromosome separately. An example of a sample file is below:
+BetaScan takes in a tab separated file with three columns. The first column contains the coordinate of each variant, and the second contains the frequency of the **derived** allele (note: this is opposite of the BALLET software), in number of haploid individuals, of the variant. However, in practice, for folded Beta only, it doesn't matter if the derived, ancestral, or already folded allele frequency is used in the second column, as BetaScan will fold the frequency anyway. The third column contains the sample size, in number of haploid individuals, that were used to calculate the frequency of that variant. The file should be sorted by position (the unix command sort -g will do this for you). Variants with frequencies of exactly 0% or 100% should not be included.  The scan should be run on each chromosome separately. An example of a sample file is below:
 
 ```
 14  2 99  
@@ -91,3 +91,13 @@ awk -F "\t|:" '(NR>1) && ($6!='0') && ($6!='1') && ($3=='2') {OFS="\t"; print$2,
 ```
 
 This command reformats the .frq file and filters out positions that have more than 2 possible alleles, or are at frequency 0 or 100%. Make sure that you use the fold command if you haven't called ancestral/derived alleles. If you have called them, then this awk script assumes that the derived allele is the first allele listed in the .frq file outputted by vcftoos. Also, please double check that this command outputs the right thing from your .frq file! There could always be variations in the .frq format I don't know about.
+
+6. I ran some simulations using the simulation software SLiM, and want to convert them into BetaScan format. Is there an easy way to do this?
+
+Once again, awk can come to the aid:
+
+'''
+awk '{OFS="\t"}{if ($1=="Genomes:") exit }(($2=="m3") || ($2=="m1")) && ($8!="100") {print $3,$8,"100"}' SLiMFile.out
+'''
+
+The first thing to note is that SLiM has more than one output file format, and this awk command only works with the SLiM format, not the ms format. Note, in this example, there's two mutation types simulated: m1 and m3, and both are outputted. You should obviously modify this so it works with your simulation details. This script also assumes a sample size of 100. If this is not our sample size, you obviously should change it to whatever it is.
