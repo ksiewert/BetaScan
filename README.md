@@ -65,25 +65,25 @@ BetaScan outputs a 2-column tab delimited file, where the first column contains 
 *Caution: if variant calls within the specified window size of the core variant are not confident, the value of Beta may not be correct, because of artificially elevated or reduced number of mutations. For this reason, we encourage you to use quality filters.*
 
 ## FAQ
-1. How many samples are needed to run Beta?
+#### How many samples are needed to run Beta?
 
 We have found that in human a relatively low number of samples, around 5, is sufficient to detect a fairly large proportion of sites. Maximum power is obtained with a sample size of around 20 (so 10 diploid individuals).
 
-2. How do I choose a value of p?
+#### How do I choose a value of p?
 
 Although there is no definite best choice of p, and results are fairly robust to choice, we do have some guidelines:
 If frequency calls can be called confidently, a value around 20 is sufficient.
 If frequency calls are not confident, a smaller value of p (around 2) should be used. 
 
-3. What window size should I use?
+#### What window size should I use?
 
 See the supplement of our paper on BioRxiv for a rough derivation of maximum window size, based on the estimated recombination rate.
 
-4. Should I use the folded or unfolded version of Beta?
+#### Should I use the folded or unfolded version of Beta?
 
 If you have accurate ancestral calls, then we recommend you use the unfolded version, because it can detect balanced haplotypes at more extreme frequencies. If you're not confident in the ancestral calls, then the folded version should be used, because it has identical power throughout most of the site frequency spectrum. In practice, it's not a bad idea to do both. First using unfolded Beta for your general scan, and then using the folded version to double check that any intermediate-frequency top unfolded scan hits are not an artifact of ancestral allele misidentification.
 
-5. I have frequency information I calculated using the --freq command in vcftools. How do I convert the vcf output format to the BetaScan output format?
+#### I have frequency information I calculated using the --freq command in vcftools. How do I convert the vcf output format to the BetaScan output format?
 
 You can use the following command in unix:
 ```
@@ -92,7 +92,7 @@ awk -F "\t|:" '(NR>1) && ($6!='0') && ($6!='1') && ($3=='2') {OFS="\t"; print$2,
 
 This command reformats the .frq file and filters out positions that have more than 2 possible alleles, or are at frequency 0 or 100%. Make sure that you use the fold command if you haven't called ancestral/derived alleles. If you have called them, then this awk script assumes that the derived allele is the first allele listed in the .frq file outputted by vcftoos. Also, please double check that this command outputs the right thing from your .frq file! There could always be variations in the .frq format I don't know about.
 
-6. I ran some simulations using the simulation software SLiM, and want to convert them into BetaScan format. Is there an easy way to do this?
+#### I ran some simulations using the simulation software SLiM, and want to convert them into BetaScan format. Is there an easy way to do this?
 
 Once again, awk can come to the aid:
 
