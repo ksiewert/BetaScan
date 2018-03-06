@@ -100,4 +100,4 @@ Once again, awk can come to the aid:
 awk '{OFS="\t"}{if ($1=="Genomes:") exit }(($2=="m3") || ($2=="m1")) && ($8!="100") {print $3,$8,"100"}' SLiMFile.out
 ```
 
-The first thing to note is that SLiM has more than one output file format, and this awk command only works with the SLiM format, not the ms format. Note, in this example, there's two mutation types simulated: m1 and m3, and both are outputted. You should obviously modify this so it works with your simulation details. This script also assumes a sample size of 100. If this is not our sample size, you should replace "100" with your sample size in quotes.
+The first thing to note is that SLiM has more than one output file format, and this awk command only works with the SLiM format, not the ms format. Note, in this example, there's two mutation types simulated: m1 and m3, and both are outputted. You should obviously modify this so it works with your simulation details. This command also assumes a sample size of 100. If this is not your sample size, you should replace "100" with your sample size in quotes.
