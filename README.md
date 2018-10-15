@@ -7,6 +7,8 @@ Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@pen
 If you would like the Beta Scores for each population in the 1000 Genomes dataset, they are available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_Full_BetaScores.tar.gz) (warning: this is a 1.8 GB gzipped file). If you just want to look at the top scoring haplotypes in each population, that data is available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_BetaScores.tar.gz).
 
 # Recent Updates
+10/15/18: You can now specify the output file name using the -o flag. Both the -i and -o flag can take in gzipped files (see examples in "Sample Commands"). I'm also happy to announce that BetaScan format can now be generated from several file formats, including plink and vcf, by the toolkit [glactools](https://grenaud.github.io/glactools/). Thank you to Gabriel Renaud for these updates!
+
 7/5/17: Added some more checks for valid parameter choice and input file format. Also, slightly modified behavior of script when determining SNPs in the current window, so that core SNP is excluded from window size when the window size is even. This means that the window will now be symmetric around the core SNP, whether an odd or even window size parameter is given. Also, made a tweak so that performance should be slightly quicker than the older version.
 
 5/4/17: Beta now can take in variable sample sizes for each SNP. In other words, not all frequencies have to be calculated using the same number of individuals. Because of this, the input file format has been updated.
@@ -37,6 +39,7 @@ BetaScan takes in a tab separated file with three columns. The first column cont
 * -p: Value of p (default: 20)
 * -m: Minimum folded frequency of core SNP, exclusive, can range from 0 to .5 (default: 0)
 * -fold: Use folded version (default: false)
+* -out: Output file name (default: print to screen)
 
 ### Explanation of parameters
 * -m: In theory, Beta has good performance down to very low and high frequencies. However, the chance of seeing an allele at very low or high equilibrium frequency that is under long-term balancing selection is very low. This is because genetic drift is expected to drift the allele out of the population (see Ewens & Thomson 1970 or Carr & Nassar 1970). We see this phenomenon for variants at folded frequency ~15% or less when we simulate overdominance with human parameters. In addition, poor variant calling can cause false variant calls at low allele frequencies. 
@@ -50,13 +53,21 @@ To run BetaScan on our file SNPFreqs.txt with default parameters:
 ```
 python BetaScan.py -i SNPFreqs.txt
 ```
-To run with a 2000 base pair window, a p parameter value of 50 and using the folded version of Beta:
+To run with a 2000 base pair window, a p parameter value of 50 and using the folded version of Beta and with a specified output file path:
 ```
-python BetaScan.py -i SNPFreqs.txt -w 2000 -p 50 -fold
+python BetaScan.py -i SNPFreqs.txt -w 2000 -p 50 -fold -o /path/chr1.beta.out
 ```
 To run with a 5000 base pair window, a p parameter value of 20 and excluding all core SNPs that are of frequency 10% or less, or of frequency 90% or greater:
 ```
 python BetaScan.py -i SNPFreqs.txt -w 5000 -p 20 -m .1
+```
+To output a gzipped file:
+```
+python BetaScan.py -i SNPFreqs.txt | gzip > chr1.beta.out.gz
+```
+To input a gzipped file:
+```
+python BetaScan.py -i < (zcat chr1.beta.gz )
 ```
 
 ### Output Format
@@ -85,11 +96,12 @@ If you have accurate ancestral calls, then we recommend you use the unfolded ver
 
 #### I have frequency information I calculated using the --freq command in vcftools. How do I convert the vcf output format to the BetaScan output format?
 
-You can use the following command in unix:
+The toolkit [glactools](https://grenaud.github.io/glactools/) is able to convert between vcfs and BetaScan format and is probably the most robust way to do this. 
+
+Alternatively, you can use the following command in unix:
 ```
 awk -F "\t|:" '(NR>1) && ($6!='0') && ($6!='1') && ($3=='2') {OFS="\t"; print$2,$6*$4,$4}' yourfile.frq
 ```
-
 This command reformats the .frq file and filters out positions that have more than 2 possible alleles, or are at frequency 0 or 100%. Make sure that you use the fold command if you haven't called ancestral/derived alleles. If you have called them, then this awk script assumes that the derived allele is the first allele listed in the .frq file outputted by vcftoos. Also, please double check that this command outputs the right thing from your .frq file! There could always be variations in the .frq format I don't know about.
 
 #### I ran some simulations using the simulation software SLiM, and want to convert them into BetaScan format. Is there an easy way to do this?
