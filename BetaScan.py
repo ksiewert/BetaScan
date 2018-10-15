@@ -114,15 +114,17 @@ def main():
 	#Loads the input parameters given by the user
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", help="Name of input file with all SNPs",type=str,required=True)
+	parser.add_argument("-o", help="Output file",type=str,default="/dev/stdout")
 	parser.add_argument("-w", help="Maximum Window Size (in bp) to calculate Beta in for a single test SNP",type=int,default=1000)
 	parser.add_argument("-p", help="Power to raise difference measure by",type=int,default=20)
 	parser.add_argument("-fold", help="Use folded SFS version",action="store_true")
 	parser.add_argument("-m", help="Minimum folded core SNP frequency, exclusive",type=float,default=0)
 
+
 	args = parser.parse_args()
 
 
-	output = open("Betas_"+args.i.split("/")[-1],'w')
+	output = open(args.o,'w')
 
 
 	#Check for valid file format and parameters
