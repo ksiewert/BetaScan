@@ -39,7 +39,7 @@ BetaScan takes in a tab separated file with three columns. The first column cont
 * -p: Value of p (default: 20)
 * -m: Minimum folded frequency of core SNP, exclusive, can range from 0 to .5 (default: 0)
 * -fold: Use folded version (default: false)
-* -out: Output file name (default: print to screen)
+* -o: Output file name (default: print to screen)
 
 ### Explanation of parameters
 * -m: In theory, Beta has good performance down to very low and high frequencies. However, the chance of seeing an allele at very low or high equilibrium frequency that is under long-term balancing selection is very low. This is because genetic drift is expected to drift the allele out of the population (see Ewens & Thomson 1970 or Carr & Nassar 1970). We see this phenomenon for variants at folded frequency ~15% or less when we simulate overdominance with human parameters. In addition, poor variant calling can cause false variant calls at low allele frequencies. 
