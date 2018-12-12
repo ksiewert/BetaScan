@@ -7,7 +7,7 @@ Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@pen
 If you would like the Beta Scores for each population in the 1000 Genomes dataset, they are available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_Full_BetaScores.tar.gz) (warning: this is a 1.8 GB gzipped file). If you just want to look at the top scoring haplotypes in each population, that data is available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_BetaScores.tar.gz).
 
 # Recent Updates
-12/10/18: BetaScan version 2 is released! This version has two main improvements: it implements a new Beta statistic which uses substitutions, and it can now standardize each Beta statistic by its variance. These updates are detailed in our BiorXiv preprint which will be available very soon.
+12/11/18: BetaScan version 2 is released! This version has two main improvements: it implements a new Beta statistic which uses substitutions, and it can now standardize each Beta statistic by its variance. These updates are detailed in our BiorXiv preprint which will be available very soon.
 
 10/15/18: You can now specify the output file name using the -o flag. Both the -i and -o flag can take in gzipped files (see examples in "Sample Commands"). I'm also happy to announce that BetaScan format can now be generated from several file formats, including plink and vcf, by the toolkit [glactools](https://grenaud.github.io/glactools/). Thank you to Gabriel Renaud for these updates!
 
@@ -40,7 +40,7 @@ BetaScan takes in a tab separated file with three columns. The first column cont
 ### Parameters 
 * -i: Path of input file
 * -w: Total window size (default: 1000, corresponding to 500 bp on either side of the center (i.e. core) SNP)
-* -p: Value of p (default: 20)
+* -p: Value of p (default: 2)
 * -m: Minimum folded frequency of core SNP, exclusive, can range from 0 to .5 (default: 0)
 * -fold: Use folded version (default: false)
 * -o: Output file name (default: print to screen)
@@ -104,9 +104,7 @@ We have found that in human a relatively low number of samples, around 5, is suf
 
 #### How do I choose a value of p?
 
-Results are fairly robust to choice.  However we have found that a value of 2 performs well under a wide array of parameters, so we recommend using 2 (the default as of 12/10/18) unless you have a reason not to.
-
-
+Results are fairly robust to choice.  However we have found that a value of 2 performs well under a wide array of parameters, so we recommend using 2 (the default as of 12/11/18) unless you have a reason not to.
 
 #### Should I use Beta1, Beta1* or Beta2?
 *If you only have a folded site frequency spectrum (i.e. you don't know what the ancestral versus derived alleles are) you need to used Beta1*.
