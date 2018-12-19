@@ -107,11 +107,11 @@ We have found that in human a relatively low number of samples, around 5, is suf
 Results are fairly robust to choice.  However we have found that a value of 2 performs well under a wide array of parameters, so we recommend using 2 (the default as of 12/11/18) unless you have a reason not to.
 
 #### Should I use Beta1, Beta1* or Beta2?
-*If you only have a folded site frequency spectrum (i.e. you don't know what the ancestral versus derived alleles are) you need to used Beta1*.
+If you only have a folded site frequency spectrum (i.e. you don't know what the ancestral versus derived alleles are) you need to used Beta1*.
 
-*If you have an unfolded site frequency spectrum, but don't have substitution information with an outgroup species, use Beta1.
+If you have an unfolded site frequency spectrum, but don't have substitution information with an outgroup species, use Beta1.
 
-*If you have substitution information and a unfolded site frequency spectrum, use Beta2. 
+If you have substitution information and a unfolded site frequency spectrum, use Beta2. 
 
 #### I have frequency information I calculated using the --freq command in vcftools. How do I convert the vcf output format to the BetaScan output format?
 
