@@ -7,7 +7,7 @@ Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@pen
 If you would like the Beta Scores for each population in the 1000 Genomes dataset, they are available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_Full_BetaScores.tar.gz) (warning: this is a 1.8 GB gzipped file). If you just want to look at the top scoring haplotypes in each population, that data is available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_BetaScores.tar.gz).
 
 # Recent Updates
-12/11/18: BetaScan version 2 is released! This version has two main improvements: it implements a new Beta statistic which uses substitutions, and it can now standardize each Beta statistic by its variance. These updates are detailed in our BiorXiv preprint which will be available very soon.
+12/11/18: BetaScan version 2 is released! This version has two main improvements: it implements a new Beta statistic which uses substitutions, and it can now standardize each Beta statistic by its variance. These updates are detailed in our [bioRxiv preprint](https://www.biorxiv.org/content/early/2018/12/17/497255).
 
 10/15/18: You can now specify the output file name using the -o flag. Both the -i and -o flag can take in gzipped files (see examples in "Sample Commands"). I'm also happy to announce that BetaScan format can now be generated from several file formats, including plink and vcf, by the toolkit [glactools](https://grenaud.github.io/glactools/). Thank you to Gabriel Renaud for these updates!
 
@@ -58,7 +58,7 @@ BetaScan takes in a tab separated file with three columns. The first column cont
 
 * -fold: The default version of Beta takes into account the frequency of each variant. However, if ancestral state cannot be confidently called, perhaps due to there being no suitable outgroup, the folded version of Beta should be used. The formulation for this statistic can be found in the supplement of our 2017 paper.
 
-* -B2: This calculates Beta2, which is the new version detailed in our Biorxiv preprint. It has higher power than the Beta1 statistics, but requires substitution data and an estimate of divergence time.
+* -B2: This calculates Beta2, which is the new version detailed in our [bioRxiv preprint](https://www.biorxiv.org/content/early/2018/12/17/497255). It has higher power than the Beta1 statistics, but requires substitution data and an estimate of divergence time.
 
 * -DivTime:  An estimate of the divergence time between your two species. This can either be obtained from prior demographic inference of your species, or using the BALLET software. In practice, this value affects the relative ranking of loci very little, but will affect the standardized statistic.  To convert from generations (g) to coalescent units (c), the formula is g=c*Ne*2 where Ne is the effective population size.
 
