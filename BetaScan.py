@@ -70,7 +70,7 @@ def calc_beta_unfolded(SNPFreqList, coreFreq, numInd,p):
 
 
 def calc_thetabeta_unfolded(SNPFreqList, coreFreq, numInd,p):
-	"""Calculates theta_Beta usign the folded SFS
+	"""Calculates theta_Beta usign the unfolded SFS
 		#SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#coreFreq: freq of coresite, ranges from 0 to 1
 		#p: the p parameter specificying sharpness of peak
@@ -153,7 +153,7 @@ def calcT_B2(SNPFreqList,coreFreq,c,n,p,theta):
 	'''
 	#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 	#n: sample size of core SNP
-	#p: the p parameter specificying sharpness of peak
+	#p: the p parameter specifying sharpness of peak
 	#theta: genome-wide estimate of the mutation rate
 	'''
 	notSubsList_noCore = SNPFreqList[np.where(SNPFreqList[:,0]!=SNPFreqList[:,1])]
@@ -168,7 +168,7 @@ def calcD(freq,x,p):
 	"""Calculates the value of d, the similarity measure
 		#freq: freq of SNP under consideration, ranges from 0 to 1
 		#x: freq of coresite, ranges from 0 to 1
-		#p: the p parameter specificying sharpness of peak
+		#p: the p parameter specifying sharpness of peak
 	"""
 	xf = min(x,1.-x)
 	f = np.minimum(freq,1.-freq)
@@ -182,7 +182,7 @@ def calcT_unfold(SNPFreqList, coreFreq, SNPn, p, theta):
 	"""
 		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#SNPn: sample size of core SNP
-		#p: the p parameter specificying sharpness of peak
+		#p: the p parameter specifying sharpness of peak
 		#theta: genome-wide estimate of the mutation rate
 	"""
 
@@ -199,7 +199,7 @@ def calcVTheta(n,theta,coreFreq,p,wattersons):
 	"""
 		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#n: sample size of core SNP
-		#p: the p parameter specificying sharpness of peak
+		#p: the p parameter specifying sharpness of peak
 		#theta: genome-wide estimate of the mutation rate
 		#Wattersons: whether to calculate wattersons theta instead of 
 	"""
@@ -229,7 +229,7 @@ def calcVTheta_fold(n,theta,coreFreq,p):
 	"""
 		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#n: sample size of core SNP
-		#p: the p parameter specificying sharpness of peak
+		#p: the p parameter specifying sharpness of peak
 		#theta: genome-wide estimate of the mutation rate
 		#Wattersons: whether to calculate wattersons theta instead of 
 	"""
@@ -249,7 +249,7 @@ def calcCovFolded(n,theta,coreFreq,p):
 	"""
 		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#n: sample size of core SNP
-		#p: the p parameter specificying sharpness of peak
+		#p: the p parameter specifying sharpness of peak
 		#theta: genome-wide estimate of the mutation rate
 	"""
 	r = np.arange(1,n/2+1)
@@ -266,7 +266,7 @@ def calcVarFoldedBeta(n,theta,coreFreq,p):
 	"""
 		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#n: sample size of core SNP
-		#p: the p parameter specificying sharpness of peak
+		#p: the p parameter specifying sharpness of peak
 		#theta: genome-wide estimate of the mutation rate
 		#Wattersons: whether to calculate wattersons theta instead of 
 	"""
@@ -278,7 +278,7 @@ def omegai(i,SNPn,x,p):
 		#i:freq of SNP under consideration, ranges between 0 and 1
 		#SNPn: number of chromosomes used to calculate frequency of core SNP
 		#x: freq of coresite, ranges from 0 to 1
-		#p: the p parameter specificying sharpness of peak
+		#p: the p parameter specifying sharpness of peak
 	"""
 	n1num = calcD(i,x,p)
 	n1denom = np.sum(calcD(np.arange(1.,SNPn)/SNPn,x,p))
@@ -339,7 +339,7 @@ def calcT_fold(SNPFreqList, coreFreq, SNPn, p, theta):
 	"""
 		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#SNPn: sample size of core SNP
-		#p: the p parameter specificying sharpness of peak
+		#p: the p parameter specifying sharpness of peak
 		#theta: genome-wide estimate of the mutation rate
 	"""
 
