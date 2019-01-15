@@ -1,7 +1,7 @@
 # BetaScan
 BetaScan implements the β statistic to detect ancient balancing selection, as described in [Siewert & Voight, 2017](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using). For in-depth instructions, please read the [BetaScan wiki](https://github.com/ksiewert/BetaScan/wiki).
 
-# Basic Usage
+## Basic Usage
 To run BetaScan on an input file named SNPFreqs.txt with default parameters:
 ```
 python BetaScan.py -i SNPFreqs.txt
@@ -10,13 +10,13 @@ If you have a folded site frequency spectrum, include the -fold flag, to calcula
 
 If you also want to standardize β by its variance, you can do so using the -SigTest flag. This flag must be accompanied by an estimate of the mutation rate using the -theta flag. Once again, see the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Usage) for details on how you can estimate the mutation rate.
 
-# Questions? Comments?
+## Questions? Comments?
 Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@pennmedicine.upenn.edu or post a github issue. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
 
-# Citations
+## Citations
 [This paper](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using). describes the  β<sup>(1)</sup> statistics. 
 [This paper](https://www.biorxiv.org/content/early/2018/12/17/497255) describes the newest updates to BetaScan, including the  β <sup>(2)</sup> statistic and standardization of β.
 
-# 1000 Genomes Beta Scores
+## 1000 Genomes Beta Scores
 If you would like the β<sup>(1)</sup> Scores for each population in the 1000 Genomes dataset, they are available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_Full_BetaScores.tar.gz) (warning: this is a 1.8 GB gzipped file). If you just want to look at the top scoring haplotypes in each population, that data is available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_BetaScores.tar.gz).
 
