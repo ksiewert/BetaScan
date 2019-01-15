@@ -6,7 +6,7 @@ To run BetaScan on an input file named SNPFreqs.txt with default parameters:
 ```
 python BetaScan.py -i SNPFreqs.txt
 ```
-If you have a folded site frequency spectrum, include the -fold flag, to calculate  β<sup>(1)\*</sup>. If your data includes subsitutions with an outgroup, you can use the -B2 flag, which calculates β<sup>(2)</sup>. However, if you use -B2 you must include an estimate of speciation time. See the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Usage) for details on how you can estimate.
+If you have a folded site frequency spectrum, include the -fold flag, to calculate β<sup>(1)\*</sup>. If your data includes substitutions with an outgroup, you can use the -B2 flag, which calculates β<sup>(2)</sup>. However, if you use -B2 you must include an estimate of speciation time. See the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Usage) for details on how you can estimate.
 
 If you also want to standardize β by its variance, you can do so using the -SigTest flag. This flag must be accompanied by an estimate of the mutation rate using the -theta flag. Once again, see the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Usage) for details on how you can estimate the mutation rate.
 
@@ -14,9 +14,9 @@ If you also want to standardize β by its variance, you can do so using the -Sig
 Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@pennmedicine.upenn.edu or post a github issue. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
 
 ## Citations
-[This paper](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using). describes the  β<sup>(1)</sup> statistics. 
-[This paper](https://www.biorxiv.org/content/early/2018/12/17/497255) describes the newest updates to BetaScan, including the  β<sup>(2)</sup> statistic and standardization of β.
+If you use the BetaScan software, please cite [Siewert KM and Voight BF, Detecting Long-Term Balancing Selection Using Allele Frequency Correlation, MBE 2017](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using). This paper describes the β<sup>(1)</sup> statistics. 
+
+You can read about the newest updates to BetaScan, including the β<sup>(2)</sup> statistic and standardization of β [in our preprint](https://www.biorxiv.org/content/early/2018/12/17/497255).
 
 ## 1000 Genomes Beta Scores
 If you would like the β<sup>(1)</sup> Scores for each population in the 1000 Genomes dataset, they are available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_Full_BetaScores.tar.gz) (warning: this is a 1.8 GB gzipped file). If you just want to look at the top scoring haplotypes in each population, that data is available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_BetaScores.tar.gz).
-
