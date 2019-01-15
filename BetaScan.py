@@ -6,7 +6,6 @@ import math
 import os
 
 
-
 def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	"""Takes in the previous indices of the starting and end of the window,
 	 then returns the appropriate starting and ending index for the next SNP
@@ -149,7 +148,7 @@ def calcVarThetaD(c,n,theta):
 	return (1./(c+1./n))**2.*(theta**2.+c*theta+theta/n+theta**2.*x)
 
 
-def calcT_B2(SNPFreqList,coreFreq,c,n,p,theta):
+def calcT_B2(SNPFreqList,coreFreq,c,n,p,theta,varDic):
 	'''
 	#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 	#n: sample size of core SNP
@@ -159,9 +158,14 @@ def calcT_B2(SNPFreqList,coreFreq,c,n,p,theta):
 	notSubsList_noCore = SNPFreqList[np.where(SNPFreqList[:,0]!=SNPFreqList[:,1])]
 	thetaB = calc_thetabeta_unfolded(notSubsList_noCore,coreFreq/n,n,p)
 	thetasubs = calcThetaD(SNPFreqList,c,n)
-	VarD = calcVarThetaD(c,n,theta)
-	VarB = calcVTheta(n,theta,coreFreq,p,False)
-	return (thetaB-thetasubs)/math.sqrt(VarD+VarB)
+	if not (n,coreFreq,theta) in varDic:
+		VarD = calcVarThetaD(c,n,theta)
+		VarB = calcVTheta(n,theta,coreFreq,p,False)
+		denom = math.sqrt(VarD+VarB)
+		varDic[(n,coreFreq,theta)] = denom
+	else:
+		denom = varDic[(n,coreFreq,theta)]
+	return (thetaB-thetasubs)/denom
 
 
 def calcD(freq,x,p):
@@ -178,7 +182,7 @@ def calcD(freq,x,p):
 
 
 #Using equation 8 from Achaz 2009
-def calcT_unfold(SNPFreqList, coreFreq, SNPn, p, theta):
+def calcT_unfold(SNPFreqList, coreFreq, SNPn, p, theta,varDic):
 	"""
 		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#SNPn: sample size of core SNP
@@ -189,7 +193,11 @@ def calcT_unfold(SNPFreqList, coreFreq, SNPn, p, theta):
 	x = float(coreFreq)/SNPn
 
 	num = np.sum(SNPFreqList[:,0]/SNPFreqList[:,1]*SNPn*omegai(SNPFreqList[:,0]/SNPFreqList[:,1],SNPn, x,p))
-	denom = math.sqrt(an(SNPn,x,p)*theta+ Bn(SNPn,x,p)*theta**2.)
+	if not (SNPn,coreFreq,theta) in varDic:
+		denom = math.sqrt(an(SNPn,x,p)*theta+ Bn(SNPn,x,p)*theta**2.)
+		varDic[(SNPn,coreFreq,theta)] = denom
+	else:
+		denom = varDic[(SNPn,coreFreq,theta)]
 
 	return num/denom
 
@@ -335,7 +343,7 @@ def Bn(SNPn,x,p):
 	return n1+n2
 
 
-def calcT_fold(SNPFreqList, coreFreq, SNPn, p, theta):
+def calcT_fold(SNPFreqList, coreFreq, SNPn, p, theta, varDic):
 	"""
 		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
 		#SNPn: sample size of core SNP
@@ -345,7 +353,11 @@ def calcT_fold(SNPFreqList, coreFreq, SNPn, p, theta):
 
 	x = float(coreFreq)/SNPn
 	num = calc_beta_folded(SNPFreqList, x, SNPn,p)
-	denom = math.sqrt(calcVarFoldedBeta(SNPn,theta,coreFreq,p))
+	if not (SNPn,coreFreq,theta) in varDic:
+		denom = math.sqrt(calcVarFoldedBeta(SNPn,theta,coreFreq,p))
+		varDic[(SNPn,coreFreq,theta)] = denom
+	else: 
+		denom = varDic[(SNPn,coreFreq,theta)]
 	return num/denom
 
 
@@ -414,9 +426,9 @@ def main():
 	parser.add_argument("-SigTest",help="Instead of returning Beta value, return normalized Beta Statistic",default=False,action="store_true")
 	parser.add_argument("-theta",help="Estimated genome wide theta value per basepair. Used for calculation of variance. It's equal to 2*l*N_e*u, where u is the locus neutral mutation rate, Ne is the effective population size and l is the ploidy",type=float)
 	parser.add_argument("-DivTime",help="Divergence time, in coalescent units, between the two species. Only needed if using B^(2). This can be estimated using the BALLET software, or you can use prior estimates for your species of interest. In practice, this value affects power very little, but will affect the standardized statistic.  To convert from generations (g) to coalescent units (c), the formula is g=c*Ne*2 where Ne is the effective population size.",type=float)
+
 	args = parser.parse_args()
 	output = open(args.o,'w')
-
 
 
 	#Check for valid file format and parameters
@@ -446,6 +458,8 @@ def main():
 		print sys.exit("Error: Your divergence time seems very high. Divergence time should be in coalescent units, not generations or years.")
 	if args.B2 and not np.any(SNPs[:, 1] == SNPs[:, 2]):
 		print sys.exit("Error: You chose to calculate Beta2, but your input file contains no substiutions. If you do not have substiution data, please use Beta1 or Beta1*.")
+	if args.B2 and args.DivTime==None:
+		print sys.exit("You must provide a divergence time using the -DivTime flag to use B2")
 
 	if not args.SigTest and args.fold:
 		output.write("Position\tBeta1*\n")
@@ -465,6 +479,7 @@ def main():
 
 	prevStarti = 0
 	prevEndi = 0
+	varDic = {} #records variance calculations so don't need to be recalculated
 	for SNPi in range(len(SNPs)):
 		loc = int(SNPs[SNPi,0])
 		freqCount = float(SNPs[SNPi,1])
@@ -481,6 +496,7 @@ def main():
 			T = None
 			if endI>sI:
 				SNPSet = np.take(SNPs,range(sI,SNPi)+range(SNPi+1,endI+1),axis=0)[:,1:]
+
 				if args.fold:
 					B = calc_beta_folded(SNPSet,freqCount/sampleN,sampleN,args.p)
 				elif not args.fold and not args.B2:
@@ -488,11 +504,14 @@ def main():
 				elif args.B2:
 					B = calcBeta2(SNPSet,args.DivTime,sampleN,freqCount/sampleN,args.p)
 				if not args.fold and args.SigTest and not args.B2:
-					T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w)
+					T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
 				elif args.SigTest and args.fold:
-					T = calcT_fold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w)
+					T = calcT_fold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
 				elif args.SigTest:
-					T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,args.theta*args.w)
+					T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,args.theta*args.w,varDic)
+			if endI==sI:
+				B=0
+				T=0
 			if not args.SigTest:
 				output.write(str(loc)+"\t"+str(round(B,6))+"\n")
 			else:
