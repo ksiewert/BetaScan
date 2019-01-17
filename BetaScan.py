@@ -5,7 +5,6 @@ import argparse
 import math
 import os
 
-
 def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	"""Takes in the previous indices of the starting and end of the window,
 	 then returns the appropriate starting and ending index for the next SNP
@@ -399,7 +398,6 @@ def sigma(n,ij):
 	return res
 
 
-
 #return a_n from Fu 1995, eq 4
 def Fu_an_vec(n):
 	a = np.insert(np.cumsum(1./np.arange(1,np.amax(n))),0,0)
@@ -410,6 +408,14 @@ def Fu_an_vec(n):
 def Fu_Bn(n,i):
 	r = 2.0*n/((n-i+1.)*(n-i)) * (Fu_an_vec([n+1])-Fu_an_vec(i)) - (2./(n-i))
 	return r
+
+#Given a numpy array of mutation rates finds the theta corresponding to the window that coordinate is in. 
+#Starts searching at the prior window index to save time
+def findLocalTheta(thetaMap,startI,coordinate):
+	for i in range(startI,thetaMap.shape[0]):
+		if coordinate<thetaMap[i,1] and coordinate>=thetaMap[i,0]:
+			return (thetaMap[i,2],i)
+	print sys.exit("Error: Coordinate "+str(coordinate)+" is found in the SNP input file, but is not in any of the windows in the thetaMap file.")
 
 
 def main():
@@ -423,8 +429,9 @@ def main():
 	parser.add_argument("-fold", help="Use folded SFS version",action="store_true")
 	parser.add_argument("-B2",help="Use the Beta2 statistic. To use this, substiution data with an outgroup is needed.",action="store_true")
 	parser.add_argument("-m", help="Minimum folded core SNP frequency, exclusive. Must be between 0 and 0.5.",type=float,default=0)
-	parser.add_argument("-SigTest",help="Instead of returning Beta value, return normalized Beta Statistic",default=False,action="store_true")
+	parser.add_argument("-std",help="Instead of returning Beta value, return normalized Beta Statistic",default=False,action="store_true")
 	parser.add_argument("-theta",help="Estimated genome wide theta value per basepair. Used for calculation of variance. It's equal to 2*l*N_e*u, where u is the locus neutral mutation rate, Ne is the effective population size and l is the ploidy",type=float)
+	parser.add_argument("-thetaMap",help="Filename of map of mutation rates. This file should contain estimated mutation rates across the genomic area you are applying Beta on.",type=str)
 	parser.add_argument("-DivTime",help="Divergence time, in coalescent units, between the two species. Only needed if using B^(2). This can be estimated using the BALLET software, or you can use prior estimates for your species of interest. In practice, this value affects power very little, but will affect the standardized statistic.  To convert from generations (g) to coalescent units (c), the formula is g=c*Ne*2 where Ne is the effective population size.",type=float)
 
 	args = parser.parse_args()
@@ -444,12 +451,12 @@ def main():
 		print sys.exit("Error: Parameter p must be positive.")
 	if len(SNPs.shape)<=1:
 		print sys.exit("Error: Because the core SNP is excluded from calculations, there must be at least two SNPs in the input file.")
-	if args.SigTest and args.theta==None:
-		print sys.exit("Error: In order to normalize Beta statistics, a theta value must be provided using the -theta flag.")
+	if args.std and args.theta==None and args.thetaMap==None:
+		print sys.exit("Error: In order to normalize Beta statistics, a theta value must be provided using the -theta or -thetaMap flags.")
 	if args.w<2:
 		print sys.exit("Error: Window size must be 2 bp or above. However, you probably want to use a window size much larger than 2.")
-	if args.SigTest and args.theta<=0:
-		print sys.exit("Error: Theta (population-scaled mutation rate) must be a positive value.")
+	if args.std and args.thetaMap==None and args.theta<=0:
+		print sys.exit("Error: You must provide an estimate of theta (population-scaled mutation rate) and it must be a positive value.")
 	if args.p>50:
 		print sys.exit("Error: P is too large. Reduce value to prevent python numerical errors. See manual for more information.")
 	if args.fold and args.B2:
@@ -461,15 +468,15 @@ def main():
 	if args.B2 and args.DivTime==None:
 		print sys.exit("You must provide a divergence time using the -DivTime flag to use B2")
 
-	if not args.SigTest and args.fold:
+	if not args.std and args.fold:
 		output.write("Position\tBeta1*\n")
-	elif args.SigTest and args.fold:
+	elif args.std and args.fold:
 		output.write("Position\tBeta1*\tBeta1*_std\n")
-	elif args.SigTest and not args.B2:
+	elif args.std and not args.B2:
 		output.write("Position\tBeta1\tBeta1_std\n")
 	elif not args.B2:
 		output.write("Position\tBeta1\n")
-	elif args.B2 and not args.SigTest:
+	elif args.B2 and not args.std:
 		output.write("Position\tBeta2\n")
 	else:
 		output.write("Position\tBeta2\tBeta2_std\n")
@@ -480,6 +487,11 @@ def main():
 	prevStarti = 0
 	prevEndi = 0
 	varDic = {} #records variance calculations so don't need to be recalculated
+	thetaMap = None
+	if args.thetaMap != None:
+		thetaMap = np.loadtxt(open(args.thetaMap,'r'),dtype=float)
+	currThetaMapI = 0
+
 	for SNPi in range(len(SNPs)):
 		loc = int(SNPs[SNPi,0])
 		freqCount = float(SNPs[SNPi,1])
@@ -503,16 +515,26 @@ def main():
 					B = calc_beta_unfolded(SNPSet,freqCount/sampleN,sampleN,args.p)
 				elif args.B2:
 					B = calcBeta2(SNPSet,args.DivTime,sampleN,freqCount/sampleN,args.p)
-				if not args.fold and args.SigTest and not args.B2:
-					T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
-				elif args.SigTest and args.fold:
-					T = calcT_fold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
-				elif args.SigTest:
-					T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,args.theta*args.w,varDic)
+				if args.thetaMap!=None:
+					theta,currThetaMapI  = findLocalTheta(thetaMap,currThetaMapI,loc)
+					if args.fold:
+						T= calcT_fold(SNPSet,freqCount,sampleN,args.p,theta*args.w,varDic)
+					elif args.B2:
+						T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,theta*args.w,varDic)
+					else:
+						T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,theta*args.w,varDic)
+				elif args.std:
+					if args.fold:
+						T = calcT_fold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
+					elif args.B2:
+						T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,args.theta*args.w,varDic)
+					else:
+						T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
+
 			if endI==sI:
 				B=0
 				T=0
-			if not args.SigTest:
+			if not args.std:
 				output.write(str(loc)+"\t"+str(round(B,6))+"\n")
 			else:
 				output.write(str(loc)+"\t"+str(round(B,6))+"\t"+str(round(T,6))+"\n")
