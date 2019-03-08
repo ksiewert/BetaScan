@@ -440,7 +440,7 @@ def main():
 
 	#Check for valid file format and parameters
 	try:
-		SNPs = np.loadtxt(open(args.i,'r'),dtype=float)
+		SNPs = np.loadtxt(args.i,dtype=float)
 	except IOError:
 		print sys.exit("Error: Input file cannot be found")
 	except:
