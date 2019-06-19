@@ -11,7 +11,7 @@ If you have a folded site frequency spectrum, you must include the -fold flag to
 If you also want to standardize β by its variance, you can do so using the -std flag. This flag must be accompanied by an estimate of the mutation rate using the -theta flag. Once again, see the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Usage) for details on how you can estimate the mutation rate.
 
 ## Questions? Comments?
-Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@pennmedicine.upenn.edu or post a github issue. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
+Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@hsph.harvard.edu or post a github issue. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
 
 ## Citations
 If you use the BetaScan software, please cite [Siewert KM and Voight BF, Detecting Long-Term Balancing Selection Using Allele Frequency Correlation, MBE 2017](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using). This paper describes the β<sup>(1)</sup> statistics. 
