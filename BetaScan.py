@@ -264,7 +264,7 @@ def calcCovFolded(n,theta,coreFreq,p):
 	t1 = 1./sum(wVector*(1./r+1./(n-r))*1./(1.+(r==n-r)))
 	t2 = 1./sum((1./r+1./(n-r))*1./(1+(r==n-r)))
 	coords = np.asarray([(i,j) for i in range(1,n/2+1) for j in range(1,n/2+1)])
-	t3 = np.sum(wVector[coords[:,0]-1]*rho_p_ij(100,coords[:,0],coords[:,1])*theta**2.)
+	t3 = np.sum(wVector[coords[:,0]-1]*rho_p_ij(n,coords[:,0],coords[:,1])*theta**2.)
 
 	return t1*t2*t3
 
