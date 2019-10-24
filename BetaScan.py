@@ -5,6 +5,7 @@ import argparse
 import math
 import os
 
+
 def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	"""Takes in the previous indices of the starting and end of the window,
 	 then returns the appropriate starting and ending index for the next SNP
@@ -126,7 +127,6 @@ def calcThetaD(SNPFreqList,c,n):
 	"""
 		c: Speciation time in coalescent units
 		n: Sample Size
-		N: Effective pop size
 	"""
 	if SNPFreqList.size==0:
 		return 0
@@ -147,6 +147,7 @@ def calcVarThetaD(c,n,theta):
 	return (1./(c+1./n))**2.*(theta**2.+c*theta+theta/n+theta**2.*x)
 
 
+
 def calcT_B2(SNPFreqList,coreFreq,c,n,p,theta,varDic):
 	'''
 	#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
@@ -165,6 +166,7 @@ def calcT_B2(SNPFreqList,coreFreq,c,n,p,theta,varDic):
 	else:
 		denom = varDic[(n,coreFreq,theta)]
 	return (thetaB-thetasubs)/denom
+
 
 
 def calcD(freq,x,p):
@@ -197,7 +199,6 @@ def calcT_unfold(SNPFreqList, coreFreq, SNPn, p, theta,varDic):
 		varDic[(SNPn,coreFreq,theta)] = denom
 	else:
 		denom = varDic[(SNPn,coreFreq,theta)]
-
 	return num/denom
 
 
@@ -265,7 +266,6 @@ def calcCovFolded(n,theta,coreFreq,p):
 	t2 = 1./sum((1./r+1./(n-r))*1./(1+(r==n-r)))
 	coords = np.asarray([(i,j) for i in range(1,n/2+1) for j in range(1,n/2+1)])
 	t3 = np.sum(wVector[coords[:,0]-1]*rho_p_ij(n,coords[:,0],coords[:,1])*theta**2.)
-
 	return t1*t2*t3
 
 
@@ -309,6 +309,7 @@ def rho_p_ii(n,i):
 
 #eq 12c of Achaz
 def rho_p_ij(n,i,j):
+
 	return (sigma(n,np.column_stack([i,j]))+sigma(n,np.column_stack([i,n-j]))+sigma(n,np.column_stack([n-i,j]))+sigma(n,np.column_stack([n-i,n-j])))/((1.+(i==n-i))*(1.+(j==n-j)))
 
 
@@ -372,6 +373,9 @@ def sigma(n,ij):
 	
 	ij[:,0],ij[:,1] = ij.max(axis=1),ij.min(axis=1) #flip coordinates if i is less than j
 	ci = np.logical_and(ij[:,0]==ij[:,1], ij[:,0]==n/2)
+
+
+	#Using eq 2
 	if np.any(ci)>0:
 		res[ci] = 2.*((Fu_an_vec([n])-Fu_an_vec(ij[ci,0]))/(float(n)-ij[ci,0]))-(1./(ij[ci,0]**2.))
 
@@ -379,10 +383,15 @@ def sigma(n,ij):
 	if np.any(ci)>0:
 		res[ci] = Fu_Bn(n,ij[ci,0]+1)
 
+	#below is line causing issue
 	ci = np.logical_and(ij[:,0]==ij[:,1], ij[:,0]>n/2)
+
 	if np.any(ci)>0:
 		res[ci] = Fu_Bn(n,ij[ci,0])-1./(ij[ci,0]**2.)
 
+
+
+	#using eq 3
 	ci = np.logical_and(ij[:,0]>ij[:,1], ij[:,0]+ij[:,1]==n)
 	if np.any(ci)>0:
 		res[ci] = (Fu_an_vec([n])-Fu_an_vec(ij[ci,0]))/(n-ij[ci,0]) + (Fu_an_vec([n])-Fu_an_vec(ij[ci,1]))/(n-ij[ci,1]) - (Fu_Bn(n,ij[ci,0])+Fu_Bn(n,ij[ci,1]+1))/2. - 1./(ij[ci,0]*ij[ci,1])
@@ -407,7 +416,9 @@ def Fu_an_vec(n):
 #returns Beta_n(i) from Fu 1995, eq 5
 def Fu_Bn(n,i):
 	r = 2.0*n/((n-i+1.)*(n-i)) * (Fu_an_vec([n+1])-Fu_an_vec(i)) - (2./(n-i))
+
 	return r
+
 
 #Given a numpy array of mutation rates finds the theta corresponding to the window that coordinate is in. 
 #Starts searching at the prior window index to save time
@@ -418,6 +429,9 @@ def findLocalTheta(thetaMap,startI,coordinate):
 	print sys.exit("Error: Coordinate "+str(coordinate)+" is found in the SNP input file, but is not in any of the windows in the thetaMap file.")
 
 
+
+
+
 def main():
 	
 	#Loads the input parameters given by the user
@@ -425,13 +439,16 @@ def main():
 	parser.add_argument("-i", help="Name of input file with all SNPs",type=str,required=True)
 	parser.add_argument("-o", help="Output file",type=str,default="/dev/stdout")
 	parser.add_argument("-w", help="Maximum Window Size (in bp) to calculate Beta in for a single test SNP",type=int,default=1000)
+	parser.add_argument("-onewin",help="Calculate Beta  on window which uses all SNPs in input file instead of using distance-based window",default=False,action="store_true")
 	parser.add_argument("-p", help="Power to raise difference measure by",type=int,default=2)
 	parser.add_argument("-fold", help="Use folded SFS version",action="store_true")
 	parser.add_argument("-B2",help="Use the Beta2 statistic. To use this, substiution data with an outgroup is needed.",action="store_true")
 	parser.add_argument("-m", help="Minimum folded core SNP frequency, exclusive. Must be between 0 and 0.5.",type=float,default=0)
 	parser.add_argument("-std",help="Instead of returning Beta value, return normalized Beta Statistic",default=False,action="store_true")
 	parser.add_argument("-theta",help="Estimated genome wide theta value per basepair. Used for calculation of variance. It's equal to 2*l*N_e*u, where u is the locus neutral mutation rate, Ne is the effective population size and l is the ploidy",type=float)
-	parser.add_argument("-thetaMap",help="Filename of map of mutation rates. This file should contain estimated mutation rates across the genomic area you are applying Beta on.",type=str)
+	parser.add_argument("-thetaMap",help="Filename of map of mutation rates. This file should contain estimated mutation rates in windows across the genomic area you are applying Beta on.",type=str)
+	parser.add_argument("-thetaPerSNP",help="Filename of map of mutation rates. This file should contain estimated mutation rates around each SNP. This file should be two columns: position and estimated theta rate.",type=str)
+
 	parser.add_argument("-DivTime",help="Divergence time, in coalescent units, between the two species. Only needed if using B^(2). This can be estimated using the BALLET software, or you can use prior estimates for your species of interest. In practice, this value affects power very little, but will affect the standardized statistic.  To convert from generations (g) to coalescent units (c), the formula is g=c*Ne*2 where Ne is the effective population size.",type=float)
 
 	args = parser.parse_args()
@@ -451,11 +468,13 @@ def main():
 		print sys.exit("Error: Parameter p must be positive.")
 	if len(SNPs.shape)<=1:
 		print sys.exit("Error: Because the core SNP is excluded from calculations, there must be at least two SNPs in the input file.")
-	if args.std and args.theta==None and args.thetaMap==None:
+	if args.std and args.theta==None and args.thetaMap==None and args.thetaPerSNP==None:
 		print sys.exit("Error: In order to normalize Beta statistics, a theta value must be provided using the -theta or -thetaMap flags.")
+	if args.onewin and (args.thetaMap!=None or args.thetaPerSNP!=None):
+		print sys.exit("Error: onewin and thetaMap options are not compatible. onewin clculates the mutation rate in the given window of arbitrary size")
 	if args.w<2:
 		print sys.exit("Error: Window size must be 2 bp or above. However, you probably want to use a window size much larger than 2.")
-	if args.std and args.thetaMap==None and args.theta<=0:
+	if args.std and args.thetaMap==None and args.theta<=0 and args.thetaPerSNP==None:
 		print sys.exit("Error: You must provide an estimate of theta (population-scaled mutation rate) and it must be a positive value.")
 	if args.p>50:
 		print sys.exit("Error: P is too large. Reduce value to prevent python numerical errors. See manual for more information.")
@@ -467,7 +486,8 @@ def main():
 		print sys.exit("Error: You chose to calculate Beta2, but your input file contains no substiutions. If you do not have substiution data, please use Beta1 or Beta1*.")
 	if args.B2 and args.DivTime==None:
 		print sys.exit("You must provide a divergence time using the -DivTime flag to use B2")
-
+	if args.thetaMap!=None and args.thetaPerSNP!=None:
+		print sys.exit("You can use -thetaMap or -thetaPerSNP but not both.")
 	if not args.std and args.fold:
 		output.write("Position\tBeta1*\n")
 	elif args.std and args.fold:
@@ -482,66 +502,110 @@ def main():
 		output.write("Position\tBeta2\tBeta2_std\n")
 
 	if not args.B2 and np.any(SNPs[:, 1] == SNPs[:, 2]):
-		SNPs = SNPs[np.where(SNPs[:,1]!=SNPs[:,2])]
+		SNPs = SNPs[(SNPs[:,1]!=SNPs[:,2]) & (SNPs[:,1]!=0)]
 
 	prevStarti = 0
 	prevEndi = 0
 	varDic = {} #records variance calculations so don't need to be recalculated
 	thetaMap = None
 	if args.thetaMap != None:
-		thetaMap = np.loadtxt(open(args.thetaMap,'r'),dtype=float)
+		thetaMap = np.loadtxt(args.thetaMap,dtype=float)
+	elif args.thetaPerSNP != None:
+		thetaMap = np.loadtxt(args.thetaPerSNP,dtype=float)
+	
 	currThetaMapI = 0
 
-	for SNPi in range(len(SNPs)):
-		loc = int(SNPs[SNPi,0])
-		freqCount = float(SNPs[SNPi,1])
-		sampleN = int(SNPs[SNPi,2])
-		freq = freqCount/sampleN
-
-		if freq<1.0-args.m and freq>args.m and sampleN>3:
-			core_loc = SNPs[SNPi,0]
-			SNPLocs = SNPs[:,0]
-			sI,endI = find_win_indx(prevStarti, prevEndi, SNPi, SNPs, args.w)
-			prevStarti = sI
-			prevEndi = endI
-			B = None
-			T = None
-			if endI>sI:
-				SNPSet = np.take(SNPs,range(sI,SNPi)+range(SNPi+1,endI+1),axis=0)[:,1:]
-
+	if args.onewin:
+		theta = calc_thetaw_unfolded(SNPs[:,1:], int(np.mean(SNPs[:,2]))) 
+		for SNPi in range(len(SNPs)):
+			loc = SNPs[SNPi,0]
+			if len(SNPs)==1:
+				T = 0
+				output.write(str(loc)+"\t"+str(round(T,6))+"\n")
+				break
+			
+			freqCount = float(SNPs[SNPi,1])
+			sampleN = int(SNPs[SNPi,2])
+			freq = freqCount/sampleN
+			SNPSet = np.delete(SNPs, SNPi,axis=0)[:,1:]
+			if int(freqCount)!=sampleN and freq<1.0-args.m and freq>args.m and sampleN>3:
 				if args.fold:
-					B = calc_beta_folded(SNPSet,freqCount/sampleN,sampleN,args.p)
-				elif not args.fold and not args.B2:
-					B = calc_beta_unfolded(SNPSet,freqCount/sampleN,sampleN,args.p)
+					T = calcT_fold(SNPSet,freqCount,sampleN,args.p,theta,varDic)
 				elif args.B2:
-					B = calcBeta2(SNPSet,args.DivTime,sampleN,freqCount/sampleN,args.p)
-				if args.thetaMap!=None:
-					theta,currThetaMapI  = findLocalTheta(thetaMap,currThetaMapI,loc)
-					if args.fold:
-						T= calcT_fold(SNPSet,freqCount,sampleN,args.p,theta*args.w,varDic)
-					elif args.B2:
-						T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,theta*args.w,varDic)
-					else:
-						T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,theta*args.w,varDic)
-				elif args.std:
-					if args.fold:
-						T = calcT_fold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
-					elif args.B2:
-						T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,args.theta*args.w,varDic)
-					else:
-						T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
+					T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,theta,varDic)
+				else:
+					T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,theta,varDic)
+				output.write(str(loc)+"\t"+str(round(T,6))+"\n")
+			elif freq>1.0 or freq<0:
+				print sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+".")
+			elif freq<1.0-args.m and freq>args.m and sampleN<=3:
+				print sys.exit("Error: Sample size must be greater than 3 haploid individuals to make inference, or else theta_beta will always equal theta_watterson's. You may wish to increase the m paramter value to exclude this SNP from being a core SNP.")
+	else:
+		for SNPi in range(len(SNPs)):
+			loc = int(SNPs[SNPi,0])
+			freqCount = float(SNPs[SNPi,1])
+			sampleN = int(SNPs[SNPi,2])
+			freq = freqCount/sampleN
 
-			if endI==sI:
-				B=0
-				T=0
-			if not args.std:
-				output.write(str(loc)+"\t"+str(round(B,6))+"\n")
-			else:
-				output.write(str(loc)+"\t"+str(round(B,6))+"\t"+str(round(T,6))+"\n")
-		elif freq>1.0 or freq<0:
-			print sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+".")
-		elif freq<1.0-args.m and freq>args.m and sampleN<=3:
-			print sys.exit("Error: Sample size must be greater than 3 haploid individuals to make inference, or else theta_beta will always equal theta_watterson's. You may wish to increase the m paramter value to exclude this SNP from being a core SNP.")
+			if int(freqCount)!=sampleN and freq<1.0-args.m and freq>args.m and sampleN>3:
+				SNPLocs = SNPs[:,0]
+				sI,endI = find_win_indx(prevStarti, prevEndi, SNPi, SNPs, args.w)
+				prevStarti = sI
+				prevEndi = endI
+				B = None
+				ThetaB = None
+				ThetaD = None
+				T = None
+				if endI>sI:
+					SNPSet = np.take(SNPs,range(sI,SNPi)+range(SNPi+1,endI+1),axis=0)[:,1:]
+					if args.fold:
+						B = calc_beta_folded(SNPSet,freqCount/sampleN,sampleN,args.p)
+					elif not args.fold and not args.B2:
+						B = calc_beta_unfolded(SNPSet,freqCount/sampleN,sampleN,args.p)
+					elif args.B2:
+						B = calcBeta2(SNPSet,args.DivTime,sampleN,freqCount/sampleN,args.p)
+
+					if args.thetaMap!=None or args.thetaPerSNP!=None:
+						theta = None
+						if args.thetaPerSNP!=None:
+							theta = thetaMap[np.where(thetaMap[:,0]==int(loc)),1] 
+							if len(theta[0])==1:
+								theta = float(theta)
+							elif len(theta[0])>1:
+								theta = float(theta[0][0])
+							else:
+								print sys.exit("SNP at location "+str(loc)+" is not in thetaPerSNP file or is found more than once")
+						else:
+							theta,currThetaMapI  = findLocalTheta(thetaMap,currThetaMapI,loc)
+							print currThetaMapI
+						if args.fold:
+							T = calcT_fold(SNPSet,freqCount,sampleN,args.p,theta*args.w,varDic)
+						elif args.B2:
+
+							T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,theta*args.w,varDic)
+						else:
+							T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,theta*args.w,varDic)
+					elif args.std:
+						if args.fold:
+							T = calcT_fold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
+						elif args.B2:
+							T = calcT_B2(SNPSet,freqCount,args.DivTime,sampleN,args.p,args.theta*args.w,varDic)
+						else:
+							T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,args.theta*args.w,varDic)
+
+				if endI==sI:
+					B=0
+					ThetaB=0
+					ThetaD=0
+					T=0
+				if not args.std:
+					output.write(str(loc)+"\t"+str(round(B,6))+"\n") #Remove thetas
+				else:
+					output.write(str(loc)+"\t"+str(round(B,6))+"\t"+str(round(T,6))+"\n")
+			elif freq>1.0 or freq<0:
+				print sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+".")
+			elif freq<1.0-args.m and freq>args.m and sampleN<=3:
+				print sys.exit("Error: Sample size must be greater than 3 haploid individuals to make inference, or else theta_beta will always equal theta_watterson's. You may wish to increase the m paramter value to exclude this SNP from being a core SNP.")
 
 
 
