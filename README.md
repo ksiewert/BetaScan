@@ -20,3 +20,5 @@ Recent updates to BetaScan, including the β<sup>(2)</sup> statistic and standar
 
 ## 1000 Genomes Beta Scores
 If you would like the β<sup>(1)</sup> Scores for each population in the 1000 Genomes dataset, they are available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_Full_BetaScores.tar.gz) (warning: this is a 1.8 GB gzipped file). If you just want to look at the top scoring haplotypes in each population, that data is available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_BetaScores.tar.gz).
+
+β<sup>(2)</sup> Scores are available for the following populations: [YRI](http://coruscant.itmat.upenn.edu/data/YRIStdB2.tar.gz), [CEU](http://coruscant.itmat.upenn.edu/data/CEUStdB2.tar.gz) and [CHB](http://coruscant.itmat.upenn.edu/data/CHBStdB2.tar.gz). [And here is a readme.txt detailing the production of these scores]http://coruscant.itmat.upenn.edu/data/README_B2stdscores.txt
