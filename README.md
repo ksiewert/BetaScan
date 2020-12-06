@@ -1,5 +1,5 @@
 # BetaScan
-Welcome! BetaScan implements the β statistic to detect ancient balancing selection, as described in [Siewert & Voight, 2017](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using). For in-depth instructions, please read the [BetaScan wiki](https://github.com/ksiewert/BetaScan/wiki).
+Welcome! BetaScan implements the β statistic to detect ancient balancing selection, as described in [Siewert & Voight, 2017](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using) and [Siewrt & Voight, 2020](https://academic.oup.com/gbe/article/12/2/3873/5721358). For in-depth instructions, please read the [BetaScan wiki](https://github.com/ksiewert/BetaScan/wiki).
 
 ## Basic Usage
 To run BetaScan on an input file named SNPFreqs.txt with default parameters:
