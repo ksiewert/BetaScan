@@ -6,9 +6,9 @@ To run BetaScan on an input file named SNPFreqs.txt with default parameters:
 ```
 python BetaScan.py -i SNPFreqs.txt
 ```
-If you have a folded site frequency spectrum, you must include the -fold flag to calculate β<sup>(1)\*</sup>. If your data includes substitutions with an outgroup, you can use the -B2 flag, which calculates β<sup>(2)</sup>. However, if you use -B2 you must include an estimate of speciation time. See the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Usage) for details on how you can estimate. Currently, BetaScan is only compatible with python 2.
+If you have a folded site frequency spectrum, you must include the -fold flag to calculate β<sup>(1)\*</sup>. If your data includes substitutions with an outgroup, you can use the -B2 flag, which calculates β<sup>(2)</sup>. However, if you use -B2 you must include an estimate of speciation time. See the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Basic-Usage) for details on how you can estimate. Currently, BetaScan is only compatible with python 2.
 
-If you also want to standardize β by its variance, you can do so using the -std flag. This flag must be accompanied by an estimate of the mutation rate using the -theta flag. Once again, see the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Usage) for details on how you can estimate the mutation rate.
+If you also want to standardize β by its variance, you can do so using the -std flag. This flag must be accompanied by an estimate of the mutation rate using the -theta flag. Once again, see the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Basic-Usage) for details on how you can estimate the mutation rate.
 
 ## Questions? Comments?
 Any feedback or questions are very welcome. You can e-mail Katie at ksiewert@hsph.harvard.edu or post a github issue. We know that programs written by other people can be difficult to use, so we’ve tried our best to make this program simple and intuitive. That being said, bioinformatics is bioinformatics, and issues will arise, so don’t hesitate to contact us!
