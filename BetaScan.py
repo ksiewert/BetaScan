@@ -1,6 +1,5 @@
 import sys
 import numpy as np
-from StringIO import StringIO
 import argparse
 import math
 import os
@@ -22,7 +21,7 @@ def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	firstI= prevStarti + np.searchsorted(dataList[prevStarti:,0],winStart,side='left') #array index of start of window, inclusive
 	winEnd = locSNP + winSize/2
 	endI = prevEndi - 1 + np.searchsorted(dataList[prevEndi:,0],winEnd,side='right') #array index of end of window, exclusive
- 	return  (firstI,endI)
+	return  (firstI,endI)
 
 
 def calc_beta_folded(SNPFreqList, coreFreq, numInd,p):
@@ -426,7 +425,7 @@ def findLocalTheta(thetaMap,startI,coordinate):
 	for i in range(startI,thetaMap.shape[0]):
 		if coordinate<thetaMap[i,1] and coordinate>=thetaMap[i,0]:
 			return (thetaMap[i,2],i)
-	print sys.exit("Error: Coordinate "+str(coordinate)+" is found in the SNP input file, but is not in any of the windows in the thetaMap file.")
+	print(sys.exit("Error: Coordinate "+str(coordinate)+" is found in the SNP input file, but is not in any of the windows in the thetaMap file."))
 
 
 
@@ -459,35 +458,35 @@ def main():
 	try:
 		SNPs = np.loadtxt(args.i,dtype=float)
 	except IOError:
-		print sys.exit("Error: Input file cannot be found")
+		print(sys.exit("Error: Input file cannot be found"))
 	except:
-		print sys.exit("Error: Input file in wrong format")
+		print(sys.exit("Error: Input file in wrong format"))
 	if args.m<0 or args.m>.5:
-		print sys.exit("Error: Parameter m must be between 0 and 0.5.")
+		print(sys.exit("Error: Parameter m must be between 0 and 0.5."))
 	if args.p<=0:
-		print sys.exit("Error: Parameter p must be positive.")
+		print(sys.exit("Error: Parameter p must be positive."))
 	if len(SNPs.shape)<=1:
-		print sys.exit("Error: Because the core SNP is excluded from calculations, there must be at least two SNPs in the input file.")
+		print(sys.exit("Error: Because the core SNP is excluded from calculations, there must be at least two SNPs in the input file."))
 	if args.std and args.theta==None and args.thetaMap==None and args.thetaPerSNP==None:
-		print sys.exit("Error: In order to normalize Beta statistics, a theta value must be provided using the -theta or -thetaMap flags.")
+		print(sys.exit("Error: In order to normalize Beta statistics, a theta value must be provided using the -theta or -thetaMap flags."))
 	if args.onewin and (args.thetaMap!=None or args.thetaPerSNP!=None):
-		print sys.exit("Error: onewin and thetaMap options are not compatible. onewin clculates the mutation rate in the given window of arbitrary size")
+		print(sys.exit("Error: onewin and thetaMap options are not compatible. onewin clculates the mutation rate in the given window of arbitrary size"))
 	if args.w<2:
-		print sys.exit("Error: Window size must be 2 bp or above. However, you probably want to use a window size much larger than 2.")
+		print(sys.exit("Error: Window size must be 2 bp or above. However, you probably want to use a window size much larger than 2."))
 	if args.std and args.thetaMap==None and args.theta<=0 and args.thetaPerSNP==None:
-		print sys.exit("Error: You must provide an estimate of theta (population-scaled mutation rate) and it must be a positive value.")
+		print(sys.exit("Error: You must provide an estimate of theta (population-scaled mutation rate) and it must be a positive value."))
 	if args.p>50:
-		print sys.exit("Error: P is too large. Reduce value to prevent python numerical errors. See manual for more information.")
+		print(sys.exit("Error: P is too large. Reduce value to prevent python numerical errors. See manual for more information."))
 	if args.fold and args.B2:
-		print sys.exit("Error: You cannot use both B1* (folded Beta) and B2. B1* is for when you have no outgroup, and B2 is for when you can call substiutions with an outgroup. See manual for guidance about which to use.")
-	if args.DivTime>1000:
-		print sys.exit("Error: Your divergence time seems very high. Divergence time should be in coalescent units, not generations or years.")
+		print(sys.exit("Error: You cannot use both B1* (folded Beta) and B2. B1* is for when you have no outgroup, and B2 is for when you can call substiutions with an outgroup. See manual for guidance about which to use."))
+	if args.DivTime!=None and args.DivTime>1000:
+		print(sys.exit("Error: Your divergence time seems very high. Divergence time should be in coalescent units, not generations or years."))
 	if args.B2 and not np.any(SNPs[:, 1] == SNPs[:, 2]):
-		print sys.exit("Error: You chose to calculate Beta2, but your input file contains no substiutions. If you do not have substiution data, please use Beta1 or Beta1*.")
+		print(sys.exit("Error: You chose to calculate Beta2, but your input file contains no substiutions. If you do not have substiution data, please use Beta1 or Beta1*."))
 	if args.B2 and args.DivTime==None:
-		print sys.exit("You must provide a divergence time using the -DivTime flag to use B2")
+		print(sys.exit("You must provide a divergence time using the -DivTime flag to use B2"))
 	if args.thetaMap!=None and args.thetaPerSNP!=None:
-		print sys.exit("You can use -thetaMap or -thetaPerSNP but not both.")
+		print(sys.exit("You can use -thetaMap or -thetaPerSNP but not both."))
 	if not args.std and args.fold:
 		output.write("Position\tBeta1*\n")
 	elif args.std and args.fold:
@@ -537,9 +536,9 @@ def main():
 					T = calcT_unfold(SNPSet,freqCount,sampleN,args.p,theta,varDic)
 				output.write(str(loc)+"\t"+str(round(T,6))+"\n")
 			elif freq>1.0 or freq<0:
-				print sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+".")
+				print(sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+"."))
 			elif freq<1.0-args.m and freq>args.m and sampleN<=3:
-				print sys.exit("Error: Sample size must be greater than 3 haploid individuals to make inference, or else theta_beta will always equal theta_watterson's. You may wish to increase the m paramter value to exclude this SNP from being a core SNP.")
+				print(sys.exit("Error: Sample size must be greater than 3 haploid individuals to make inference, or else theta_beta will always equal theta_watterson's. You may wish to increase the m paramter value to exclude this SNP from being a core SNP."))
 	else:
 		for SNPi in range(len(SNPs)):
 			loc = int(SNPs[SNPi,0])
@@ -557,7 +556,8 @@ def main():
 				ThetaD = None
 				T = None
 				if endI>sI:
-					SNPSet = np.take(SNPs,range(sI,SNPi)+range(SNPi+1,endI+1),axis=0)[:,1:]
+					
+					SNPSet = np.take(SNPs,list(range(sI,SNPi))+list(range(SNPi+1,endI+1)),axis=0)[:,1:]
 					if args.fold:
 						B = calc_beta_folded(SNPSet,freqCount/sampleN,sampleN,args.p)
 					elif not args.fold and not args.B2:
@@ -574,10 +574,9 @@ def main():
 							elif len(theta[0])>1:
 								theta = float(theta[0][0])
 							else:
-								print sys.exit("SNP at location "+str(loc)+" is not in thetaPerSNP file or is found more than once")
+								print(sys.exit("SNP at location "+str(loc)+" is not in thetaPerSNP file or is found more than once"))
 						else:
 							theta,currThetaMapI  = findLocalTheta(thetaMap,currThetaMapI,loc)
-							print currThetaMapI
 						if args.fold:
 							T = calcT_fold(SNPSet,freqCount,sampleN,args.p,theta*args.w,varDic)
 						elif args.B2:
@@ -603,9 +602,9 @@ def main():
 				else:
 					output.write(str(loc)+"\t"+str(round(B,6))+"\t"+str(round(T,6))+"\n")
 			elif freq>1.0 or freq<0:
-				print sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+".")
+				print(sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(SNPi)+"."))
 			elif freq<1.0-args.m and freq>args.m and sampleN<=3:
-				print sys.exit("Error: Sample size must be greater than 3 haploid individuals to make inference, or else theta_beta will always equal theta_watterson's. You may wish to increase the m paramter value to exclude this SNP from being a core SNP.")
+				print(sys.exit("Error: Sample size must be greater than 3 haploid individuals to make inference, or else theta_beta will always equal theta_watterson's. You may wish to increase the m paramter value to exclude this SNP from being a core SNP."))
 
 
 
