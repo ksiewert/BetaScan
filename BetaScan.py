@@ -1,6 +1,5 @@
 import sys
 import numpy as np
-from io import StringIO
 import argparse
 import math
 import os
@@ -22,7 +21,7 @@ def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	firstI= prevStarti + np.searchsorted(dataList[prevStarti:,0],winStart,side='left') #array index of start of window, inclusive
 	winEnd = locSNP + winSize/2
 	endI = prevEndi - 1 + np.searchsorted(dataList[prevEndi:,0],winEnd,side='right') #array index of end of window, exclusive
- 	return  (firstI,endI)
+	return  (firstI,endI)
 
 
 def calc_beta_folded(SNPFreqList, coreFreq, numInd,p):
@@ -242,12 +241,12 @@ def calcVTheta_fold(n,theta,coreFreq,p):
 		#Wattersons: whether to calculate wattersons theta instead of 
 	"""
 
-	wVector = calcD(np.arange(1,n/2+1)/float(n),float(coreFreq)/n,p)
-	r = np.arange(1,n/2+1)
+	wVector = calcD(np.arange(1,int(n/2)+1)/float(n),float(coreFreq)/n,p)
+	r = np.arange(1,int(n/2)+1)
 	t1 = sum(wVector*(1./r+1./(n-r))*1./(1+(r==n-r)))**-2.
-	t2 = sum([wVector[i-1]**2.*(phi(n,i)*theta+rho_p_ii(n,i)*theta**2.) for i in range(1,n/2+1)])
+	t2 = sum([wVector[i-1]**2.*(phi(n,i)*theta+rho_p_ii(n,i)*theta**2.) for i in range(1,int(n/2)+1)])
 	
-	coords = np.asarray([(j,i) for i in range(1,n/2+1) for j in range(1,i)])
+	coords = np.asarray([(j,i) for i in range(1,int(n/2)+1) for j in range(1,i)])
 	t3 = np.sum(wVector[coords[:,0]-1]*wVector[coords[:,1]-1]*rho_p_ij(n,coords[:,0],coords[:,1])*theta**2.)
 
 	return t1*(t2+2.*t3)
@@ -260,11 +259,11 @@ def calcCovFolded(n,theta,coreFreq,p):
 		#p: the p parameter specifying sharpness of peak
 		#theta: genome-wide estimate of the mutation rate
 	"""
-	r = np.arange(1,n/2+1)
+	r = np.arange(1,int(n/2)+1)
 	wVector = calcD(r/float(n),float(coreFreq)/n,p)
 	t1 = 1./sum(wVector*(1./r+1./(n-r))*1./(1.+(r==n-r)))
 	t2 = 1./sum((1./r+1./(n-r))*1./(1+(r==n-r)))
-	coords = np.asarray([(i,j) for i in range(1,n/2+1) for j in range(1,n/2+1)])
+	coords = np.asarray([(i,j) for i in range(1,int(n/2)+1) for j in range(1,int(n/2)+1)])
 	t3 = np.sum(wVector[coords[:,0]-1]*rho_p_ij(n,coords[:,0],coords[:,1])*theta**2.)
 	return t1*t2*t3
 
@@ -383,9 +382,7 @@ def sigma(n,ij):
 	if np.any(ci)>0:
 		res[ci] = Fu_Bn(n,ij[ci,0]+1)
 
-	#below is line causing issue
 	ci = np.logical_and(ij[:,0]==ij[:,1], ij[:,0]>n/2)
-
 	if np.any(ci)>0:
 		res[ci] = Fu_Bn(n,ij[ci,0])-1./(ij[ci,0]**2.)
 
@@ -480,7 +477,7 @@ def main():
 		print(sys.exit("Error: P is too large. Reduce value to prevent python numerical errors. See manual for more information."))
 	if args.fold and args.B2:
 		print(sys.exit("Error: You cannot use both B1* (folded Beta) and B2. B1* is for when you have no outgroup, and B2 is for when you can call substiutions with an outgroup. See manual for guidance about which to use."))
-	if args.DivTime>1000:
+	if args.DivTime!=None and args.DivTime>1000:
 		print(sys.exit("Error: Your divergence time seems very high. Divergence time should be in coalescent units, not generations or years."))
 	if args.B2 and not np.any(SNPs[:, 1] == SNPs[:, 2]):
 		print(sys.exit("Error: You chose to calculate Beta2, but your input file contains no substiutions. If you do not have substiution data, please use Beta1 or Beta1*."))
@@ -488,7 +485,16 @@ def main():
 		print(sys.exit("You must provide a divergence time using the -DivTime flag to use B2"))
 	if args.thetaMap!=None and args.thetaPerSNP!=None:
 		print(sys.exit("You can use -thetaMap or -thetaPerSNP but not both."))
-	if not args.std and args.fold:
+
+
+	if args.onewin:
+		if args.fold:
+			output.write("Position\tBeta1*_std\n")
+		elif args.B2:
+			output.write("Position\tBeta2_std\n")
+		else:
+			output.write("Position\tBeta1_std\n")	
+	elif not args.std and args.fold:
 		output.write("Position\tBeta1*\n")
 	elif args.std and args.fold:
 		output.write("Position\tBeta1*\tBeta1*_std\n")
@@ -557,6 +563,7 @@ def main():
 				ThetaD = None
 				T = None
 				if endI>sI:
+					
 					SNPSet = np.take(SNPs,list(range(sI,SNPi))+list(range(SNPi+1,endI+1)),axis=0)[:,1:]
 					if args.fold:
 						B = calc_beta_folded(SNPSet,freqCount/sampleN,sampleN,args.p)
@@ -577,7 +584,6 @@ def main():
 								print(sys.exit("SNP at location "+str(loc)+" is not in thetaPerSNP file or is found more than once"))
 						else:
 							theta,currThetaMapI  = findLocalTheta(thetaMap,currThetaMapI,loc)
-							print(currThetaMapI)
 						if args.fold:
 							T = calcT_fold(SNPSet,freqCount,sampleN,args.p,theta*args.w,varDic)
 						elif args.B2:
