@@ -1,12 +1,14 @@
 # BetaScan
 Welcome! BetaScan implements the β statistic to detect ancient balancing selection, as described in [Siewert & Voight, 2017](https://academic.oup.com/mbe/article/doi/10.1093/molbev/msx209/3988103/Detecting-Long-term-Balancing-Selection-using) and [Siewert & Voight, 2020](https://academic.oup.com/gbe/article/12/2/3873/5721358). For in-depth instructions, please read the [BetaScan wiki](https://github.com/ksiewert/BetaScan/wiki).
 
+Update: 11/8/22: The newest version of BetaScan now uses python3! If you want to continue using the old python2 code, you can use BetaScan_python2.py. Otherwise, use BetaScan.py
+
 ## Basic Usage
 To run BetaScan on an input file named SNPFreqs.txt with default parameters:
 ```
 python BetaScan.py -i SNPFreqs.txt
 ```
-If you have a folded site frequency spectrum, you must include the -fold flag to calculate β<sup>(1)\*</sup>. If your data includes substitutions with an outgroup, you can use the -B2 flag, which calculates β<sup>(2)</sup>. However, if you use -B2 you must include an estimate of speciation time. See the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Basic-Usage) for details on how you can estimate. Currently, BetaScan is only compatible with python 2.
+If you have a folded site frequency spectrum, you must include the -fold flag to calculate β<sup>(1)\*</sup>. If your data includes substitutions with an outgroup, you can use the -B2 flag, which calculates β<sup>(2)</sup>. However, if you use -B2 you must include an estimate of speciation time. See the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Basic-Usage) for details on how you can estimate.
 
 If you also want to standardize β by its variance, you can do so using the -std flag. This flag must be accompanied by an estimate of the mutation rate using the -theta flag. Once again, see the [Usage page of the wiki](https://github.com/ksiewert/BetaScan/wiki/Basic-Usage) for details on how you can estimate the mutation rate.
 
