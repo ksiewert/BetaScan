@@ -9,11 +9,11 @@ def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 	"""Takes in the previous indices of the starting and end of the window,
 	 then returns the appropriate starting and ending index for the next SNP
 
-	 Parameters
-	 prevStarti: the starting index in the array of SNP for the previous core SNP's window, inclusive
-	 prevEndi: the ending index in the array for the previous SNP's window, inclusive
-	 SNPi, the index in the array for the current SNP under consideration
-	 dataList: the numpy array of all SNP locations & frequencies
+	 Parameters:
+		prevStarti: the starting index in the array of SNP for the previous core SNP's window, inclusive
+		prevEndi: the ending index in the array for the previous SNP's window, inclusive
+		SNPi, the index in the array for the current SNP under consideration
+		dataList: the numpy array of all SNP locations & frequencies
 	"""
 
 	locSNP = dataList[SNPi,0] #the coordinates of the core SNP
@@ -26,10 +26,12 @@ def find_win_indx(prevStarti, prevEndi, SNPi, dataList, winSize):
 
 def calc_beta_folded(SNPFreqList, coreFreq, numInd,p):
 	"""Calculates the value of d, the similarity measure, times i, the frequency from Siewert et al.
-		#SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
-		#coreFreq: freq of coresite, ranges from 0 to 1
-		#p: the p parameter specificying sharpness of peak
-		#numInd: the number of haploid individuals used to calculate frequency of core site
+
+	Parameters:
+		SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
+		coreFreq: freq of coresite, ranges from 0 to 1
+		p: the p parameter specificying sharpness of peak
+		numInd: the number of haploid individuals used to calculate frequency of core site
 	"""
 
 	if SNPFreqList.size==0:
@@ -50,7 +52,7 @@ def calc_beta_unfolded(SNPFreqList, coreFreq, numInd,p):
 	"""Calculates the unfolded version of Beta from Siewert and Voight
 		For use when the ancestral and derived alleles can be confidently called
 	
-		Parameters:
+	Parameters:
 		SNPFreqList: a list of frequencies, one for each SNP in the window,
 			first column ranges from 1 to number of individuals, second columns is # individuals
 		coreFreq: the frequency of the core SNP, must range from 0 to 1, exclusive
@@ -69,10 +71,12 @@ def calc_beta_unfolded(SNPFreqList, coreFreq, numInd,p):
 
 def calc_thetabeta_unfolded(SNPFreqList, coreFreq, numInd,p):
 	"""Calculates theta_Beta usign the unfolded SFS
-		#SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
-		#coreFreq: freq of coresite, ranges from 0 to 1
-		#p: the p parameter specificying sharpness of peak
-		#numInd: the number of haploid individuals used to calculate frequency of core site
+
+	Parameters:
+		SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
+		coreFreq: freq of coresite, ranges from 0 to 1
+		p: the p parameter specificying sharpness of peak
+		numInd: the number of haploid individuals used to calculate frequency of core site
 	"""
 
 	if SNPFreqList.size==0:
@@ -87,10 +91,12 @@ def calc_thetabeta_unfolded(SNPFreqList, coreFreq, numInd,p):
 
 def calc_thetabeta_folded(SNPFreqList, coreFreq, numInd,p):
 	"""Calculates theta_Beta using the folded SFS
-		#SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
-		#coreFreq: freq of coresite, ranges from 0 to 1
-		#p: the p parameter specificying sharpness of peak
-		#numInd: the number of haploid individuals used to calculate frequency of core site
+
+	Parameters:
+		SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
+		coreFreq: freq of coresite, ranges from 0 to 1
+		p: the p parameter specificying sharpness of peak
+		numInd: the number of haploid individuals used to calculate frequency of core site
 	"""
 
 	if SNPFreqList.size==0:
@@ -107,7 +113,7 @@ def calc_thetabeta_folded(SNPFreqList, coreFreq, numInd,p):
 def calc_thetaw_unfolded(SNPFreqList, numInd):
 	"""Calculates watterson's theta
 	
-		Parameters:
+	Parameters:
 		SNPFreqList: a list of frequencies, one for each SNP in the window,
 			first column ranges from 1 to number of individuals, second columns is # individuals
 		numInd: number of individuals used to calculate the core site frequency
@@ -121,9 +127,12 @@ def calc_thetaw_unfolded(SNPFreqList, numInd):
 	return thetaW
 
 
-#Calculates theta_D
+
 def calcThetaD(SNPFreqList,c,n):
 	"""
+	Calculates theta_D
+
+	Parameters:
 		c: Speciation time in coalescent units
 		n: Sample Size
 	"""
@@ -139,8 +148,15 @@ def calcBeta2(SNPFreqList,c,n,coreFreq,p):
 	return calc_thetabeta_unfolded(SNPs,coreFreq,n,p)-calcThetaD(SNPFreqList,c,n)
 
 
-#Calculates the variance of Theta_S
+
 def calcVarThetaD(c,n,theta):
+	"""Calculates the variance of Theta_S
+
+	Parameters:
+		c: Speciation time in coalescent units
+		n: Sample Size
+		theta: genome-wide estimate of the mutation rate
+	"""
 	i = np.arange(2,n+1)
 	x = np.sum(1./(i**2.*(i-1)**2.))
 	return (1./(c+1./n))**2.*(theta**2.+c*theta+theta/n+theta**2.*x)
@@ -149,10 +165,12 @@ def calcVarThetaD(c,n,theta):
 
 def calcT_B2(SNPFreqList,coreFreq,c,n,p,theta,varDic):
 	'''
-	#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
-	#n: sample size of core SNP
-	#p: the p parameter specifying sharpness of peak
-	#theta: genome-wide estimate of the mutation rate
+
+	Parameters:
+		coreFreq: freq of SNP under consideration, ranges from 1 to sample size
+		n: sample size of core SNP
+		p: the p parameter specifying sharpness of peak
+		theta: genome-wide estimate of the mutation rate
 	'''
 	notSubsList_noCore = SNPFreqList[np.where(SNPFreqList[:,0]!=SNPFreqList[:,1])]
 	thetaB = calc_thetabeta_unfolded(notSubsList_noCore,coreFreq/n,n,p)
@@ -170,9 +188,11 @@ def calcT_B2(SNPFreqList,coreFreq,c,n,p,theta,varDic):
 
 def calcD(freq,x,p):
 	"""Calculates the value of d, the similarity measure
-		#freq: freq of SNP under consideration, ranges from 0 to 1
-		#x: freq of coresite, ranges from 0 to 1
-		#p: the p parameter specifying sharpness of peak
+
+	Parameters:
+		freq: freq of SNP under consideration, ranges from 0 to 1
+		x: freq of coresite, ranges from 0 to 1
+		p: the p parameter specifying sharpness of peak
 	"""
 	xf = min(x,1.-x)
 	f = np.minimum(freq,1.-freq)
@@ -181,13 +201,16 @@ def calcD(freq,x,p):
 	return corr 
 
 
-#Using equation 8 from Achaz 2009
-def calcT_unfold(SNPFreqList, coreFreq, SNPn, p, theta,varDic):
+
+def calcT_unfold(SNPFreqList, coreFreq, SNPn, p, theta, varDic):
 	"""
-		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
-		#SNPn: sample size of core SNP
-		#p: the p parameter specifying sharpness of peak
-		#theta: genome-wide estimate of the mutation rate
+	Using equation 8 from Achaz 2009
+
+	Parameters:
+		coreFreq: freq of SNP under consideration, ranges from 1 to sample size
+		SNPn: sample size of core SNP
+		p: the p parameter specifying sharpness of peak
+		theta: genome-wide estimate of the mutation rate
 	"""
 
 	x = float(coreFreq)/SNPn
@@ -201,14 +224,16 @@ def calcT_unfold(SNPFreqList, coreFreq, SNPn, p, theta,varDic):
 	return num/denom
 
 
-#Calculates variance of a given estimator of theta, eq 7 from Achaz. 
-def calcVTheta(n,theta,coreFreq,p,wattersons):
+def calcVTheta(n, theta, coreFreq, p, wattersons):
 	"""
-		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
-		#n: sample size of core SNP
-		#p: the p parameter specifying sharpness of peak
-		#theta: genome-wide estimate of the mutation rate
-		#Wattersons: whether to calculate wattersons theta instead of 
+	Calculates variance of a given estimator of theta, eq 7 from Achaz. 
+
+	Parameters:
+		coreFreq: freq of SNP under consideration, ranges from 1 to sample size
+		n: sample size of core SNP
+		p: the p parameter specifying sharpness of peak
+		theta: genome-wide estimate of the mutation rate
+		wattersons: whether to calculate wattersons theta instead of 
 	"""
 	wVector = None
 	if wattersons==True:
@@ -234,11 +259,11 @@ def calcVTheta(n,theta,coreFreq,p,wattersons):
 
 def calcVTheta_fold(n,theta,coreFreq,p):
 	"""
-		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
-		#n: sample size of core SNP
-		#p: the p parameter specifying sharpness of peak
-		#theta: genome-wide estimate of the mutation rate
-		#Wattersons: whether to calculate wattersons theta instead of 
+		Parameters:
+		coreFreq: freq of SNP under consideration, ranges from 1 to sample size
+		n: sample size of core SNP
+		p: the p parameter specifying sharpness of peak
+		theta: genome-wide estimate of the mutation rate
 	"""
 
 	wVector = calcD(np.arange(1,int(n/2)+1)/float(n),float(coreFreq)/n,p)
@@ -254,10 +279,11 @@ def calcVTheta_fold(n,theta,coreFreq,p):
 
 def calcCovFolded(n,theta,coreFreq,p):
 	"""
-		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
-		#n: sample size of core SNP
-		#p: the p parameter specifying sharpness of peak
-		#theta: genome-wide estimate of the mutation rate
+	Parameters:
+		coreFreq: freq of SNP under consideration, ranges from 1 to sample size
+		n: sample size of core SNP
+		p: the p parameter specifying sharpness of peak
+		theta: genome-wide estimate of the mutation rate
 	"""
 	r = np.arange(1,int(n/2)+1)
 	wVector = calcD(r/float(n),float(coreFreq)/n,p)
@@ -268,23 +294,25 @@ def calcCovFolded(n,theta,coreFreq,p):
 	return t1*t2*t3
 
 
-def calcVarFoldedBeta(n,theta,coreFreq,p):
+def calcVarFoldedBeta(n, theta, coreFreq, p):
 	"""
-		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
-		#n: sample size of core SNP
-		#p: the p parameter specifying sharpness of peak
-		#theta: genome-wide estimate of the mutation rate
-		#Wattersons: whether to calculate wattersons theta instead of 
+	Parameters:
+		n: sample size of core SNP
+		theta: genome-wide estimate of the mutation rate
+		coreFreq: freq of SNP under consideration, ranges from 1 to sample size
+		p: the p parameter specifying sharpness of peak
 	"""
 	return calcVTheta_fold(n,theta,coreFreq,p)+calcVTheta(n,theta,coreFreq,p,True)-2.*calcCovFolded(n,theta,coreFreq,p)
 
 
 def omegai(i,SNPn,x,p):
 	"""Calculates 9a
-		#i:freq of SNP under consideration, ranges between 0 and 1
-		#SNPn: number of chromosomes used to calculate frequency of core SNP
-		#x: freq of coresite, ranges from 0 to 1
-		#p: the p parameter specifying sharpness of peak
+
+	Parameters:
+		i:freq of SNP under consideration, ranges between 0 and 1
+		SNPn: number of chromosomes used to calculate frequency of core SNP
+		x: freq of coresite, ranges from 0 to 1
+		p: the p parameter specifying sharpness of peak
 	"""
 	n1num = calcD(i,x,p)
 	n1denom = np.sum(calcD(np.arange(1.,SNPn)/SNPn,x,p))
@@ -295,37 +323,56 @@ def omegai(i,SNPn,x,p):
 
 #Eq 12a of Achaz
 def phi(n,i):
-	#n:sample size
-	#i: frequency of SNP, in number of individuals
+	"""
+	Calculates equation 12 of Achaz
+
+	Parameters:
+		n:sample size
+		i: frequency of SNP, in number of individuals
+	"""
 	return n/((1.+(i==n-i))*i*(n-i))
 
-#eq 12b of Achaz
+
 def rho_p_ii(n,i):
-	#n:sample size
-	#i: frequency of SNP, in number of individuals
+	"""
+	Calculates equation 12b of Achaz
+
+	Parameters:
+		n:sample size
+		i: frequency of SNP, in number of individuals
+	"""
 	return (sigma(n,np.column_stack([i,i]))+sigma(n,np.column_stack([n-i,n-i]))+2.*sigma(n,np.column_stack([i,n-i])))/(1.+(i==(n-i)))**2.
 
 
-#eq 12c of Achaz
 def rho_p_ij(n,i,j):
+	"""
+	Calcualtes equation 12c of Achaz
 
+	Parameters:
+		n:sample size
+		i: frequency of SNP, in number of individuals
+		j: second frequency
+	"""
 	return (sigma(n,np.column_stack([i,j]))+sigma(n,np.column_stack([i,n-j]))+sigma(n,np.column_stack([n-i,j]))+sigma(n,np.column_stack([n-i,n-j])))/((1.+(i==n-i))*(1.+(j==n-j)))
 
 
-#Returns alpha_n from Achaz 2009, eq 9b
 def an(SNPn,x,p):
-	'''
+	"""
+	Calculates alpha_n from Achaz 2009, eq 9b
+
 		SNPn: Sample size
 		x: frequency, ranges from 0 to 1
 		p: value of p parameter
-	'''
+	"""
 	i=np.arange(1,SNPn)
 	return np.sum(i*omegai(i/float(SNPn),SNPn,x,p)**2.)
 
 
-#Returns Beta_N from Achaz 2009, eq 9c
 def Bn(SNPn,x,p):
 	'''
+	Returns Beta_N from Achaz 2009, eq 9c
+
+	Parameters:
 		SNPn: Sample size
 		x: frequency, ranges from 0 to 1
 		p: value of p parameter
@@ -344,10 +391,12 @@ def Bn(SNPn,x,p):
 
 def calcT_fold(SNPFreqList, coreFreq, SNPn, p, theta, varDic):
 	"""
-		#coreFreq: freq of SNP under consideration, ranges from 1 to sample size
-		#SNPn: sample size of core SNP
-		#p: the p parameter specifying sharpness of peak
-		#theta: genome-wide estimate of the mutation rate
+
+	Parameters:
+		coreFreq: freq of SNP under consideration, ranges from 1 to sample size
+		SNPn: sample size of core SNP
+		p: the p parameter specifying sharpness of peak
+		theta: genome-wide estimate of the mutation rate
 	"""
 
 	x = float(coreFreq)/SNPn
@@ -360,12 +409,14 @@ def calcT_fold(SNPFreqList, coreFreq, SNPn, p, theta, varDic):
 	return num/denom
 
 
-#Returns sigma from eq 2 or 3 in Fu 1995
 def sigma(n,ij):
-	'''
+	"""
+	Returns sigma from eq 2 or 3 in Fu 1995
+
+	Parameters:
 		n: sample size
 		ij: 2-d array of integers with 2 cols and no rows
-	'''
+	"""
 	np.seterr(all='raise')
 	res = np.zeros(ij.shape[0])
 	#i must be greater than j
@@ -387,7 +438,6 @@ def sigma(n,ij):
 		res[ci] = Fu_Bn(n,ij[ci,0])-1./(ij[ci,0]**2.)
 
 
-
 	#using eq 3
 	ci = np.logical_and(ij[:,0]>ij[:,1], ij[:,0]+ij[:,1]==n)
 	if np.any(ci)>0:
@@ -404,28 +454,30 @@ def sigma(n,ij):
 	return res
 
 
-#return a_n from Fu 1995, eq 4
 def Fu_an_vec(n):
+	"""Calculates a_n from Fu 1995, eq 4"""
 	a = np.insert(np.cumsum(1./np.arange(1,np.amax(n))),0,0)
 	return a[np.asarray(n)-1] #minus one for sum being only to n-1
 
 
-#returns Beta_n(i) from Fu 1995, eq 5
 def Fu_Bn(n,i):
-	r = 2.0*n/((n-i+1.)*(n-i)) * (Fu_an_vec([n+1])-Fu_an_vec(i)) - (2./(n-i))
+	"""Calculates Beta_n(i) from Fu 1995, eq 5"""
 
+	r = 2.0*n/((n-i+1.)*(n-i)) * (Fu_an_vec([n+1])-Fu_an_vec(i)) - (2./(n-i))
 	return r
 
 
-#Given a numpy array of mutation rates finds the theta corresponding to the window that coordinate is in. 
-#Starts searching at the prior window index to save time
+
 def findLocalTheta(thetaMap,startI,coordinate):
+	"""
+	Given a numpy array of mutation rates finds the theta corresponding to the window that coordinate is in. 
+	Starts searching at the prior window index to save time
+	"""
 	for i in range(startI,thetaMap.shape[0]):
 		if coordinate<thetaMap[i,1] and coordinate>=thetaMap[i,0]:
 			return (thetaMap[i,2],i)
-	print(sys.exit("Error: Coordinate "+str(coordinate)+" is found in the SNP input file, but is not in any of the windows in the thetaMap file."))
-
-
+	print(sys.exit("Error: Coordinate "+str(coordinate)+" is found in the SNP input file, but is not in any \
+		of the windows in the thetaMap file."))
 
 
 
