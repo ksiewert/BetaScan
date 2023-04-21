@@ -28,7 +28,7 @@ def find_win_indx(prev_start_i, prev_end_i, snp_i, data_list, win_size):
 
 
 def calc_beta_folded(snp_freq_list, core_freq, num_ind, p):
-    """Calculates the value of d, the similarity measure, times i, the frequency from Siewert et al.
+    """Calculates the value of the folded beta statistic
 
     Parameters:
         SNPFreq: freq of SNP under consideration, ranges from 1 to sample size
@@ -41,10 +41,10 @@ def calc_beta_folded(snp_freq_list, core_freq, num_ind, p):
         return 0
     a1 = np.sum(1./np.arange(1, num_ind))
     thetaW = len(snp_freq_list[:, 0])/a1
-    thetaBNum = np.sum(calcD(snp_freq_list[:, 0]/snp_freq_list[:, 1], core_freq, p))
+    thetaBNum = np.sum(calc_d(snp_freq_list[:, 0]/snp_freq_list[:, 1], core_freq, p))
 
     i = np.arange(1, num_ind)
-    thetaBDenom = np.sum((1./i)*calcD(i/float(num_ind), core_freq, p))
+    thetaBDenom = np.sum((1./i)*calc_d(i/float(num_ind), core_freq, p))
 
     thetaB = thetaBNum/thetaBDenom
     return thetaB - thetaW
@@ -65,8 +65,8 @@ def calc_beta_unfolded(snp_freq_list, core_freq, num_ind, p):
         return 0
     a1 = np.sum(1./np.arange(1, num_ind))
     thetaW = len(snp_freq_list[:, 0])/a1
-    thetaBNum = sum(calcD(snp_freq_list[:, 0]/snp_freq_list[:, 1], core_freq, p) * snp_freq_list[:, 0])
-    thetaBDenom = np.sum(calcD(np.arange(1, num_ind)/float(num_ind), core_freq, p))
+    thetaBNum = sum(calc_d(snp_freq_list[:, 0]/snp_freq_list[:, 1], core_freq, p) * snp_freq_list[:, 0])
+    thetaBDenom = np.sum(calc_d(np.arange(1, num_ind)/float(num_ind), core_freq, p))
     thetaB = thetaBNum/thetaBDenom
     return thetaB - thetaW
 
@@ -83,9 +83,9 @@ def calc_thetabeta_unfolded(snp_freq_list, core_freq, num_ind, p):
 
     if snp_freq_list.size == 0:
         return 0
-    thetaBNum = np.sum(calcD(snp_freq_list[:, 0]/snp_freq_list[:, 1], core_freq, p) * snp_freq_list[:, 0])
+    thetaBNum = np.sum(calc_d(snp_freq_list[:, 0]/snp_freq_list[:, 1], core_freq, p) * snp_freq_list[:, 0])
 
-    thetaBDenom = np.sum(calcD(np.arange(1, num_ind)/float(num_ind), core_freq, p))
+    thetaBDenom = np.sum(calc_d(np.arange(1, num_ind)/float(num_ind), core_freq, p))
 
     thetaB = thetaBNum/thetaBDenom
     return thetaB
@@ -103,17 +103,17 @@ def calc_thetabeta_folded(snp_freq_list, core_freq, num_ind, p):
 
     if snp_freq_list.size == 0:
         return 0
-    thetaBNum = np.sum(calcD(snp_freq_list[:, 0]/snp_freq_list[:, 1], core_freq, p))
-    
-    thetaBDenom = np.sum((1./np.arange(1, num_ind))*calcD(np.arange(1, num_ind) / float(num_ind), core_freq, p))
+    thetaBNum = np.sum(calc_d(snp_freq_list[:, 0]/snp_freq_list[:, 1], core_freq, p))
+
+    thetaBDenom = np.sum((1./np.arange(1, num_ind))*calc_d(np.arange(1, num_ind) / float(num_ind), core_freq, p))
 
     thetaB = thetaBNum/thetaBDenom
-    return thetaB 
+    return thetaB
 
 
 def calc_thetaw_unfolded(snp_freq_list, num_ind):
     """Calculates watterson's theta
-    
+
     Parameters:
         snp_freq_list: a list of frequencies, one for each SNP in the window,
             first column ranges from 1 to number of individuals, second columns is # individuals
@@ -128,7 +128,7 @@ def calc_thetaw_unfolded(snp_freq_list, num_ind):
     return thetaW
 
 
-def calcThetaD(snp_freq_list, c, n):
+def calc_theta_d(snp_freq_list, c, n):
     """
     Calculates theta_D
 
@@ -143,12 +143,12 @@ def calcThetaD(snp_freq_list, c, n):
     return S/(c+1./n)
 
 
-def calcBeta2(snp_freq_list, c, n, core_freq, p):
+def calc_beta_2(snp_freq_list, c, n, core_freq, p):
     SNPs = snp_freq_list[np.where(snp_freq_list[:, 0] != snp_freq_list[:, 1])]
-    return calc_thetabeta_unfolded(SNPs, core_freq, n, p) - calcThetaD(snp_freq_list, c, n)
+    return calc_thetabeta_unfolded(SNPs, core_freq, n, p) - calc_theta_d(snp_freq_list, c, n)
 
 
-def calcVarThetaD(c, n, theta):
+def calc_var_theta_d(c, n, theta):
     """Calculates the variance of Theta_S
 
     Parameters:
@@ -161,7 +161,7 @@ def calcVarThetaD(c, n, theta):
     return (1./(c+1./n))**2.*(theta**2.+c*theta+theta/n+theta**2.*x)
 
 
-def calcT_B2(snp_freq_list, core_freq, c, n, p, theta, var_dic):
+def calc_t_b2(snp_freq_list, core_freq, c, n, p, theta, var_dic):
     '''
 
     Parameters:
@@ -172,10 +172,10 @@ def calcT_B2(snp_freq_list, core_freq, c, n, p, theta, var_dic):
     '''
     notSubsList_noCore = snp_freq_list[np.where(snp_freq_list[:, 0] != snp_freq_list[:, 1])]
     thetaB = calc_thetabeta_unfolded(notSubsList_noCore, core_freq/n, n, p)
-    thetasubs = calcThetaD(snp_freq_list, c, n)
+    thetasubs = calc_theta_d(snp_freq_list, c, n)
     if not (n, core_freq, theta) in var_dic:
-        VarD = calcVarThetaD(c, n, theta)
-        VarB = calcVTheta(n, theta, core_freq, p, False)
+        VarD = calc_var_theta_d(c, n, theta)
+        VarB = calc_var_theta(n, theta, core_freq, p, False)
         denom = math.sqrt(VarD+VarB)
         var_dic[(n, core_freq, theta)] = denom
     else:
@@ -183,7 +183,7 @@ def calcT_B2(snp_freq_list, core_freq, c, n, p, theta, var_dic):
     return (thetaB-thetasubs)/denom
 
 
-def calcD(freq, x, p):
+def calc_d(freq, x, p):
     """Calculates the value of d, the similarity measure
 
     Parameters:
@@ -198,7 +198,7 @@ def calcD(freq, x, p):
     return corr 
 
 
-def calcT_unfold(snp_freq_list, core_freq, snp_n, p, theta, var_dic):
+def calc_t_unfolded(snp_freq_list, core_freq, snp_n, p, theta, var_dic):
     """
     Using equation 8 from Achaz 2009
 
@@ -221,22 +221,22 @@ def calcT_unfold(snp_freq_list, core_freq, snp_n, p, theta, var_dic):
     return num/denom
 
 
-def calcVTheta(n, theta, core_freq, p, wattersons):
+def calc_var_theta(n, theta, core_freq, p, wattersons):
     """
-    Calculates variance of a given estimator of theta, eq 7 from Achaz. 
+    Calculates variance of a given estimator of theta, eq 7 from Achaz.
 
     Parameters:
         core_freq: freq of SNP under consideration, ranges from 1 to sample size
         n: sample size of core SNP
         p: the p parameter specifying sharpness of peak
         theta: genome-wide estimate of the mutation rate
-        wattersons: whether to calculate wattersons theta instead of 
+        wattersons: whether to calculate wattersons theta instead of
     """
     wVector = None
     if wattersons:
         wVector = 1./np.arange(1, n)
     else:
-        wVector = calcD(np.arange(1, n)/float(n), float(core_freq)/n, p)
+        wVector = calc_d(np.arange(1, n)/float(n), float(core_freq)/n, p)
     t1 = np.sum(wVector)**(-2.)
     t2 = theta*np.sum(wVector**2. * np.arange(1, n))
 
@@ -253,7 +253,7 @@ def calcVTheta(n, theta, core_freq, p, wattersons):
     return t1*(t2+t3)
 
 
-def calcVTheta_fold(n, theta, core_freq, p):
+def calc_var_theta_fold(n, theta, core_freq, p):
     """
         Parameters:
         core_freq: freq of SNP under consideration, ranges from 1 to sample size
@@ -262,7 +262,7 @@ def calcVTheta_fold(n, theta, core_freq, p):
         theta: genome-wide estimate of the mutation rate
     """
 
-    wVector = calcD(np.arange(1, int(n/2)+1)/float(n), float(core_freq)/n, p)
+    wVector = calc_d(np.arange(1, int(n/2)+1)/float(n), float(core_freq)/n, p)
     r = np.arange(1, int(n/2)+1)
     t1 = sum(wVector*(1./r+1./(n-r)) * 1./(1+(r == n-r)))**-2.
     t2 = sum([wVector[i-1]**2.*(phi(n, i)*theta+rho_p_ii(n, i)*theta**2.) for i in range(1, int(n/2)+1)])
@@ -273,7 +273,7 @@ def calcVTheta_fold(n, theta, core_freq, p):
     return t1*(t2+2.*t3)
 
 
-def calcCovFolded(n, theta, core_freq, p):
+def calc_cov_folded(n, theta, core_freq, p):
     """
     Parameters:
         core_freq: freq of SNP under consideration, ranges from 1 to sample size
@@ -282,7 +282,7 @@ def calcCovFolded(n, theta, core_freq, p):
         theta: genome-wide estimate of the mutation rate
     """
     r = np.arange(1, int(n/2)+1)
-    wVector = calcD(r/float(n), float(core_freq)/n, p)
+    wVector = calc_d(r/float(n), float(core_freq)/n, p)
     t1 = 1./sum(wVector*(1./r+1./(n-r))*1./(1.+(r == n-r)))
     t2 = 1./sum((1./r+1./(n-r))*1./(1+(r == n-r)))
     coords = np.asarray([(i, j) for i in range(1, int(n/2)+1) for j in range(1, int(n/2)+1)])
@@ -290,7 +290,7 @@ def calcCovFolded(n, theta, core_freq, p):
     return t1*t2*t3
 
 
-def calcVarFoldedBeta(n, theta, core_freq, p):
+def calc_var_folded_beta(n, theta, core_freq, p):
     """
     Parameters:
         n: sample size of core SNP
@@ -298,8 +298,8 @@ def calcVarFoldedBeta(n, theta, core_freq, p):
         core_freq: freq of SNP under consideration, ranges from 1 to sample size
         p: the p parameter specifying sharpness of peak
     """
-    return calcVTheta_fold(n, theta, core_freq, p) + calcVTheta(n, theta, core_freq, p, True) - \
-        2. * calcCovFolded(n, theta, core_freq, p)
+    return calc_var_theta_fold(n, theta, core_freq, p) + calc_var_theta(n, theta, core_freq, p, True) - \
+        2. * calc_cov_folded(n, theta, core_freq, p)
 
 
 def omegai(i, snp_n, x, p):
@@ -311,8 +311,8 @@ def omegai(i, snp_n, x, p):
         x: freq of coresite, ranges from 0 to 1
         p: the p parameter specifying sharpness of peak
     """
-    n1num = calcD(i, x, p)
-    n1denom = np.sum(calcD(np.arange(1., snp_n)/snp_n, x, p))
+    n1num = calc_d(i, x, p)
+    n1denom = np.sum(calc_d(np.arange(1., snp_n)/snp_n, x, p))
     n1 = n1num/n1denom
     n2 = (1./(i*snp_n)) / (np.sum(1./np.arange(1., snp_n)))
     return n1 - n2
@@ -343,7 +343,7 @@ def rho_p_ii(n, i):
 
 def rho_p_ij(n, i, j):
     """
-    Calcualtes equation 12c of Achaz
+    Calculates equation 12c of Achaz
 
     Parameters:
         n:sample size
@@ -387,7 +387,7 @@ def Bn(snp_n, x, p):
     return n1+n2
 
 
-def calcT_fold(snp_freq_list, core_freq, snp_n, p, theta, var_dic):
+def calc_t_fold(snp_freq_list, core_freq, snp_n, p, theta, var_dic):
     """
 
     Parameters:
@@ -400,7 +400,7 @@ def calcT_fold(snp_freq_list, core_freq, snp_n, p, theta, var_dic):
     x = float(core_freq)/snp_n
     num = calc_beta_folded(snp_freq_list, x, snp_n, p)
     if not (snp_n, core_freq, theta) in var_dic:
-        denom = math.sqrt(calcVarFoldedBeta(snp_n, theta, core_freq, p))
+        denom = math.sqrt(calc_var_folded_beta(snp_n, theta, core_freq, p))
         var_dic[(snp_n, core_freq, theta)] = denom
     else:
         denom = var_dic[(snp_n, core_freq, theta)]
@@ -423,50 +423,50 @@ def sigma(n, ij):
 
     # Using eq 2
     if np.any(ci) > 0:
-        res[ci] = 2.*((Fu_an_vec([n]) - Fu_an_vec(ij[ci, 0]))/(float(n)-ij[ci, 0]))-(1./(ij[ci, 0]**2.))
+        res[ci] = 2.*((fu_an_vec([n]) - fu_an_vec(ij[ci, 0]))/(float(n)-ij[ci, 0]))-(1./(ij[ci, 0]**2.))
 
     ci = np.logical_and(ij[:, 0] == ij[:, 1], ij[:, 0] < n/2)
     if np.any(ci) > 0:
-        res[ci] = Fu_Bn(n, ij[ci, 0]+1)
+        res[ci] = fu_Bn(n, ij[ci, 0]+1)
 
     ci = np.logical_and(ij[:, 0] == ij[:, 1], ij[:, 0] > n/2)
     if np.any(ci) > 0:
-        res[ci] = Fu_Bn(n, ij[ci, 0])-1./(ij[ci, 0]**2.)
+        res[ci] = fu_Bn(n, ij[ci, 0])-1./(ij[ci, 0]**2.)
 
     # using eq 3
     ci = np.logical_and(ij[:, 0] > ij[:, 1], ij[:, 0]+ij[:, 1] == n)
     if np.any(ci) > 0:
-        res[ci] = (Fu_an_vec([n])-Fu_an_vec(ij[ci, 0]))/(n-ij[ci, 0]) + \
-         (Fu_an_vec([n])-Fu_an_vec(ij[ci, 1]))/(n-ij[ci, 1])
-        - (Fu_Bn(n, ij[ci, 0]) + Fu_Bn(n, ij[ci, 1]+1))/2. - 1./(ij[ci, 0]*ij[ci, 1])
+        res[ci] = (fu_an_vec([n])-fu_an_vec(ij[ci, 0]))/(n-ij[ci, 0]) + \
+         (fu_an_vec([n])-fu_an_vec(ij[ci, 1]))/(n-ij[ci, 1])
+        - (fu_Bn(n, ij[ci, 0]) + fu_Bn(n, ij[ci, 1]+1))/2. - 1./(ij[ci, 0]*ij[ci, 1])
 
     ci = np.logical_and(ij[:, 0] > ij[:, 1], ij[:, 0]+ij[:, 1] < n)
     if np.any(ci) > 0:
-        res[ci] = (Fu_Bn(n, ij[ci, 0]+1)-Fu_Bn(n, ij[ci, 0]))/2.
+        res[ci] = (fu_Bn(n, ij[ci, 0]+1)-fu_Bn(n, ij[ci, 0]))/2.
 
     ci = np.logical_and(ij[:, 0] > ij[:, 1], ij[:, 0]+ij[:, 1] > n)
     if np.any(ci) > 0:
-        res[ci] = (Fu_Bn(n, ij[ci, 1])-Fu_Bn(n, ij[ci, 1]+1))/2.-(1./(ij[ci, 0] * ij[ci, 1]))
+        res[ci] = (fu_Bn(n, ij[ci, 1])-fu_Bn(n, ij[ci, 1]+1))/2.-(1./(ij[ci, 0] * ij[ci, 1]))
 
     return res
 
 
-def Fu_an_vec(n):
+def fu_an_vec(n):
     """Calculates a_n from Fu 1995, eq 4"""
     a = np.insert(np.cumsum(1./np.arange(1, np.amax(n))), 0, 0)
     return a[np.asarray(n)-1]  # minus one for sum being only to n-1
 
 
-def Fu_Bn(n, i):
+def fu_Bn(n, i):
     """Calculates Beta_n(i) from Fu 1995, eq 5"""
 
-    r = 2.0 * n/((n-i+1.)*(n-i)) * (Fu_an_vec([n+1])-Fu_an_vec(i)) - (2./(n-i))
+    r = 2.0 * n/((n-i+1.)*(n-i)) * (fu_an_vec([n+1])-fu_an_vec(i)) - (2./(n-i))
     return r
 
 
-def findLocalTheta(theta_map, start_i, coordinate):
+def find_local_theta(theta_map, start_i, coordinate):
     """
-    Given a numpy array of mutation rates finds the theta corresponding to the window that coordinate is in. 
+    Given a numpy array of mutation rates finds the theta corresponding to the window that coordinate is in.
     Starts searching at the prior window index to save time
     """
     for i in range(start_i, theta_map.shape[0]):
@@ -604,11 +604,11 @@ def main():
             SNPSet = np.delete(SNPs, snp_i, axis=0)[:, 1:]
             if int(freqCount) != sample_n and freq < 1.0-args.m and freq > args.m and sample_n > 3:
                 if args.fold:
-                    T = calcT_fold(SNPSet, freqCount, sample_n, args.p, theta, var_dic)
+                    T = calc_t_fold(SNPSet, freqCount, sample_n, args.p, theta, var_dic)
                 elif args.B2:
-                    T = calcT_B2(SNPSet, freqCount, args.DivTime, sample_n, args.p, theta, var_dic)
+                    T = calc_t_b2(SNPSet, freqCount, args.DivTime, sample_n, args.p, theta, var_dic)
                 else:
-                    T = calcT_unfold(SNPSet, freqCount, sample_n, args.p, theta, var_dic)
+                    T = calc_t_unfolded(SNPSet, freqCount, sample_n, args.p, theta, var_dic)
                 output.write(str(loc)+"\t"+str(round(T, 6))+"\n")
             elif freq > 1.0 or freq < 0:
                 print(sys.exit("Error: Input file contains SNP of invalid frequency on line "+str(snp_i)+"."))
@@ -637,7 +637,7 @@ def main():
                     elif not args.fold and not args.B2:
                         B = calc_beta_unfolded(SNPSet, freqCount/sample_n, sample_n, args.p)
                     elif args.B2:
-                        B = calcBeta2(SNPSet, args.DivTime, sample_n, freqCount/sample_n, args.p)
+                        B = calc_beta_2(SNPSet, args.DivTime, sample_n, freqCount/sample_n, args.p)
 
                     if args.theta_map is not None or args.thetaPerSNP is not None:
                         theta = None
@@ -651,20 +651,20 @@ def main():
                                 print(sys.exit("SNP at location "+str(loc)+" is not in thetaPerSNP file or is found \
                                                more than once"))
                         else:
-                            theta, curr_theta_i = findLocalTheta(theta_map, curr_theta_i, loc)
+                            theta, curr_theta_i = find_local_theta(theta_map, curr_theta_i, loc)
                         if args.fold:
-                            T = calcT_fold(SNPSet, freqCount, sample_n, args.p, theta * args.w, var_dic)
+                            T = calc_t_fold(SNPSet, freqCount, sample_n, args.p, theta * args.w, var_dic)
                         elif args.B2:
-                            T = calcT_B2(SNPSet, freqCount, args.DivTime, sample_n, args.p, theta*args.w, var_dic)
+                            T = calc_t_b2(SNPSet, freqCount, args.DivTime, sample_n, args.p, theta*args.w, var_dic)
                         else:
-                            T = calcT_unfold(SNPSet, freqCount, sample_n, args.p, theta*args.w, var_dic)
+                            T = calc_t_unfolded(SNPSet, freqCount, sample_n, args.p, theta*args.w, var_dic)
                     elif args.std:
                         if args.fold:
-                            T = calcT_fold(SNPSet, freqCount, sample_n, args.p, args.theta * args.w, var_dic)
+                            T = calc_t_fold(SNPSet, freqCount, sample_n, args.p, args.theta * args.w, var_dic)
                         elif args.B2:
-                            T = calcT_B2(SNPSet, freqCount, args.DivTime, sample_n, args.p, args.theta*args.w, var_dic)
+                            T = calc_t_b2(SNPSet, freqCount, args.DivTime, sample_n, args.p, args.theta*args.w, var_dic)
                         else:
-                            T = calcT_unfold(SNPSet, freqCount, sample_n, args.p, args.theta * args.w, var_dic)
+                            T = calc_t_unfolded(SNPSet, freqCount, sample_n, args.p, args.theta * args.w, var_dic)
 
                 if endI == sI:
                     B = 0
