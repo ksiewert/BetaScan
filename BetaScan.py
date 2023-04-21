@@ -8,7 +8,7 @@ def find_win_indx(prev_start_i, prev_end_i, snp_i, data_list, win_size):
     """Takes in the previous indices of the start_ing and end of the window,
     then returns the appropriate start_ing and ending index for the next SNP
 
-        Parameters:
+    Parameters:
         prev_start_i: start_ing index in the array of SNP for the previous core SNP's window, inclusive
         prev_end_i: ending index in the array for the previous SNP's window, inclusive
         snp_i, the index in the array for the current SNP under consideration
