@@ -21,7 +21,7 @@ The original Beta statistics are described in [Detecting Long-Term Balancing Sel
 Recent updates to BetaScan, including the β<sup>(2)</sup> statistic and standardization are now published in [BetaScan2: Standardized statistics to detect balancing selection utilizing substitution data, GBE 2020](https://academic.oup.com/gbe/advance-article/doi/10.1093/gbe/evaa013/5721358).
 
 ## 1000 Genomes Beta Scores
-If you would like the β<sup>(1)</sup> Scores for each population in the 1000 Genomes dataset, they are available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_Full_BetaScores.tar.gz) (warning: this is a 1.8 GB gzipped file). If you just want to look at the top 1% highest scoring haplotypes in each population, that data is available [here](http://coruscant.itmat.upenn.edu/data/SiewertEA_BetaScores.tar.gz). These scores are based on hg19.
+If you would like the β<sup>(1)</sup> scores for each population in the 1000 Genomes dataset, they are available [here](https://doi.org/10.5281/zenodo.7842399). If you just want to look at the top 1% highest scoring haplotypes in each population, that data is also available [here](https://doi.org/10.5281/zenodo.7842399). These scores are based on hg19.
 
-β<sup>(2)</sup> Scores are available for the following populations: [YRI](http://coruscant.itmat.upenn.edu/data/YRIStdB2.tar.gz), [CEU](http://coruscant.itmat.upenn.edu/data/CEUStdB2.tar.gz) and [CHB](http://coruscant.itmat.upenn.edu/data/CHBStdB2.tar.gz). And here's the [ReadMe.txt](http://coruscant.itmat.upenn.edu/data/README_B2stdscores.txt). These scores are also based on hg19.
+β<sup>(2)</sup> Scores are available for the YRI, CEU and CHB populations are available [here](https://doi.org/10.5281/zenodo.7842447). These scores are also based on hg19.
 
